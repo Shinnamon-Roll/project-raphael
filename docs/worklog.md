@@ -66,3 +66,9 @@ and the main session appends it.
 - 19:23 [core] #15 started: Phase 0.5: sentence splitter
 - 19:37 [core] #15 done: Phase 0.5: sentence splitter → added SentenceSplitter: streamed Claude text to sentences with NLTokenizer and a markdown strip for speech, with tests; audit: ship, glossary wording fixed — UrielCore/Sources/UrielCore/Voice/SentenceSplitter.swift, UrielCore/Tests/UrielCoreTests/Voice/SentenceSplitterTests.swift, docs/plan.md, CLAUDE.md
 - 19:38 [core] #16 started: Phase 0.6: latency spike
+
+## 2026-10-12
+
+- 00:20 [main] #19 received: Menu-bar icon: the Halo mark
+- 00:20 [main] #19 started: Menu-bar icon: the Halo mark
+- 00:22 [main] #19 done: Menu-bar icon: the Halo mark → Replaced the waveform.circle SF Symbol with the owner's Halo mark, a template SVG in a new asset catalog — Uriel/Assets.xcassets, Uriel/UrielApp.swift, CLAUDE.md, docs/plan.md

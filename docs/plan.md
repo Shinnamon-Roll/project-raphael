@@ -108,7 +108,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Tests: a timer fires once; a cancelled timer never fires; injected clock.
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
-   - Contents: a distinct SF Symbol and accessibility label for each state, and a Quit item.
+   - Contents: a distinct variant of the `Halo` icon and an accessibility label for each state, and a Quit item.
    - Manual: light and dark mode, VoiceOver.
 9. **`ui`: settings.**
    - Contents: a `SecureField` for the API key into the Keychain, and a voice picker with preview.

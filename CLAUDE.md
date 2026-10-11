@@ -213,7 +213,7 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 
 - `UrielCore/` – the Swift package that holds all logic (ADR 0006): sources in `Sources/UrielCore/`, Swift Testing tests in `Tests/UrielCoreTests/`.
 - `project.yml` – the XcodeGen source of the thin `Uriel` app target: bundle ID, signing, hardened runtime, `INFOPLIST_KEY_*` settings, and the dependency on `UrielCore` (ADR 0006, ADR 0007). The generated `Uriel.xcodeproj` is git-ignored.
-- `Uriel/` – the app's sources, a synced folder: `UrielApp.swift` (the `MenuBarExtra`) and `Uriel.entitlements` (audio input only).
+- `Uriel/` – the app's sources, a synced folder: `UrielApp.swift` (the `MenuBarExtra`), `Uriel.entitlements` (audio input only) and `Assets.xcassets` (the menu-bar icon `Halo`, wings under a halo, picked by the owner on 2026-10-12: a template SVG that macOS tints for light and dark bars).
 - `Spikes/Latency/` – the latency spike, a command-line package that depends on `UrielCore` by path. Its `results/` is git-ignored.
 - `.claude/agents/` – `core`, `ui`, `research`, `answer`, `audit`.
 - `.claude/helpers/` – `queue.py`, `worklog.sh`, and graft's hook and statusline shims.
@@ -288,6 +288,7 @@ Track unanswered questions here and settle them with the owner.
 
 - **Swift style and lint:** the Swift API Design Guidelines with `swift format` from the toolchain, or SwiftLint as well?
 - **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation; it is out of v1.
+- **Menu-bar states:** the `Halo` mark has no centre that can change. How should listening, thinking and speaking look (step 1.8)?
 - **The voice:** which female English voice? An Apple Premium voice, or Kokoro later? The owner picks by ear.
 - **Privacy:** every utterance's text goes to the Claude API. Is that fine for everything the owner says near the Mac?
 - **No internet:** what should Uriel say or do?

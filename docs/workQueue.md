@@ -20,6 +20,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #19 · 2026-10-12 · main · Menu-bar icon: the Halo mark
 - #15 · 2026-10-11 · core · Phase 0.5: sentence splitter
 - #14 · 2026-10-11 · core · Phase 0.4: Keychain store for the API key
 - #18 · 2026-10-11 · main · Correct the Claude API facts from the official docs
