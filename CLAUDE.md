@@ -21,7 +21,7 @@ What Uriel does:
 
 Nothing else. The v1 plan is `docs/plan.md` (drafted by `research`, approved by the owner on 2026-10-11). The owner answered the v1 questions (`docs/plan.md` § Owner answers) and ordered Phase 0 on 2026-10-11; `docs/workQueue.md` shows the current step. Stop after each phase and wait for the owner.
 
-**Later** (gathered, not planned; nothing here starts without a new plan): calendar and reminders (EventKit), contacts, mail and messages, music, volume, brightness and Focus, running the owner's Shortcuts, "what's on my screen" and computer use, Apple Foundation Models as an on-device router or offline fallback, escalating hard questions to a stronger model, memory across conversations, a more natural voice (Kokoro), launch at login.
+**Later** (gathered, not planned; nothing here starts without a new plan): calendar and reminders (EventKit), contacts, mail and messages, music (Spotify first after v1, the owner's pick, 2026-10-12), volume, brightness and Focus, running the owner's Shortcuts, "what's on my screen" and computer use, Apple Foundation Models as an on-device router or offline fallback, escalating hard questions to a stronger model, memory across conversations, a more natural voice (Kokoro).
 
 The owner holds the requirements and the Definition of Done, and is the only person who decides. Agents report to the main session, and the main session reports to the owner. When a requirement is unknown, say so and add it to "Open questions" instead of inventing one. A question from the owner ("ทำได้ไหม?") is a question: answer it and wait for an explicit order before building. Ask clarifying questions in Thai. Code, docs and commit messages are in English. UI copy is English (owner, 2026-10-12). Uriel itself speaks and listens in Thai (owner, 2026-10-12).
 
@@ -314,8 +314,6 @@ Track unanswered questions here and settle them with the owner.
 **Open, not blocking v1:**
 
 - **Swift style and lint:** the Swift API Design Guidelines with `swift format` from the toolchain, or SwiftLint as well?
-- **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation; it is out of v1.
-- **A timer that ends while Uriel is not running:** speak about it at the next launch, or leave it to the notification?
 - **The voice:** which female Thai voice? Kanya, a Premium or Enhanced download if one exists, or a neural voice later? The owner picks by ear, after the language works.
-- **macOS 27:** will the owner upgrade? It changes Foundation Models and maybe the Speech APIs.
+- **macOS 27:** the owner upgrades on 2026-10-12, before the wake-word recordings. Re-check the platform facts afterwards: does `SpeechTranscriber` gain Thai, and does `CaptureInputSequenceProvider` replace the `AVAudioEngine` tap?
 - **Git branch model:** stay on `main`, or use feature branches?

@@ -83,6 +83,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Manual: the mic prompt appears and the orange indicator is on.
    - Pulled forward on 2026-10-12 (the owner's order, #31): a mic switch. `Microphone` in `UrielCore` starts and stops one `AVAudioEngine` input tap (`AudioEngineSource`) that drops its buffers. This step still adds the 16 kHz conversion, fan-out, the gate, the ring buffer, and a restart after a device change.
 2. **`core`: wake-word detector** behind a protocol, using the engine picked in 0.7.
+   - From this step the mic switch is on at launch (owner, 2026-10-12).
    - Test: fixtures made with `say -o`, never the owner's voice.
    - Manual: 10 calls.
 3. **`core`: transcriber.**
@@ -95,9 +96,13 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
      - rank the female Thai voices: premium, then enhanced, then default (Kanya is installed);
      - save the voice's identifier;
      - speak one `AVSpeechUtterance` per sentence;
-     - gate the wake word while speaking, plus about 300 ms.
+     - gate the wake word while speaking, plus about 300 ms, until step 4a replaces the gate.
    - Test: the ranking over a fake voice list.
    - Manual: listen to it.
+4a. **`core`: barge-in** (owner, 2026-10-12: the owner may interrupt Uriel mid-sentence).
+   - Echo cancellation through voice processing on the input node, so Uriel does not hear herself; the wake word stays live while she speaks, and the owner's voice stops her.
+   - First measure how much of her own voice still reaches the wake word and the transcriber.
+   - Manual: interrupt a long answer, near and far, with and without music.
 5. **`core`: conversation and turn loop.**
    - An `@MainActor @Observable` state machine: idle, listening, thinking, speaking, follow-up.
    - History is append-only (ADR 0008), with an idle reset and a turn cap.
@@ -115,7 +120,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Tools: `set_timer` (1 s to 24 h, checked in Swift), `list_timers` and `cancel_timer`.
    - When a timer ends: a notification and a spoken alert.
    - Tests: a timer fires once; a cancelled timer never fires; injected clock.
-   - Timers are saved and restored when Uriel restarts (owner, 2026-10-12).
+   - Timers are saved and restored when Uriel restarts (owner, 2026-10-12). A timer that ended while Uriel was not running is spoken at the next launch (owner, 2026-10-12).
    - Test: a saved timer is restored with its remaining time.
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
@@ -123,6 +128,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Pulled forward on 2026-10-12: a native macOS menu (the owner's pick) with a status line, "About Uriel" and "Quit Uriel". This step makes the status line live and adds pause listening and the timers; settings arrive with step 9.
    - Also pulled forward on 2026-10-12 (the owner's order, #31): a "Microphone" checkmark item, off at launch, and a status line that follows it (off, starting, on, permission denied, failed). When access is denied, "Open Microphone Settings…" opens System Settings › Privacy & Security › Microphone. This step still adds the listening, thinking and speaking states and the `Halo` variants, decides whether the mic switch is the pause-listening item, and adds the timers.
    - The variants are drawn in `docs/design/halo-states.svg` (picked by the owner on 2026-10-12): idle, listening (also the follow-up window), thinking, speaking and offline.
+   - An "Open at Login" checkmark (`SMAppService.mainApp`): the owner wants launch at login in v1 (2026-10-12).
    - Manual: light and dark mode, VoiceOver.
 9. **`ui`: settings.**
    - Contents: a `SecureField` for the API key into the Keychain, and a voice picker with preview.
@@ -158,6 +164,13 @@ Owner answers (2026-10-12):
 | Language of v1 | Thai: Uriel listens and speaks Thai. Token use (about 2.4× English) is checked in daily use. The voice is picked later. | 0.5–0.7, 1.3–1.5 |
 | Chat model and budget | "the best" within $50 a month: Sonnet 5.5 `low` with `between_tools`, the top of the Thai blind rating (ADR 0010) | 1.5 |
 | The missed 1.5 s target | Uriel confirms tool calls herself instead of waiting for Claude's second reply | 1.6 |
+| A timer that ended while Uriel was closed | spoken at the next launch | 1.7 |
+| UI copy | English: the menu, settings and permission strings | 1.8–1.10 |
+| The mic at launch | on, once the wake word works | 1.2 |
+| Launch at login | in v1 | 1.8 |
+| Barge-in | in v1 | 1.4a |
+| After v1 | Spotify control first | Later |
+| macOS 27 | the owner upgrades on 2026-10-12, before the wake-word recordings | 0.7 |
 
 Conversation defaults (the owner chose the proposed column):
 
@@ -171,7 +184,7 @@ Conversation defaults (the owner chose the proposed column):
 
 ## Later (not in this plan)
 
-Barge-in with echo cancellation, cache keep-alive, the server-side refusal fallback, conversation summaries, and everything on the "Later" list in `CLAUDE.md`.
+Cache keep-alive, the server-side refusal fallback, conversation summaries, and everything on the "Later" list in `CLAUDE.md`.
 
 ## Sources (accessed 2026-10-11)
 

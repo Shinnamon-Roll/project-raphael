@@ -18,10 +18,10 @@ queue and worklog). The full history, with what changed in which files, is
 ## In progress (กำลังทำ)
 
 - #17 · 2026-10-12 · main · Phase 0.7: wake-word spike
-- #32 · 2026-10-12 · main · Record the owner's answers: timer spoken at next launch, English UI, mic on at launch, launch at login and barge-in in v1, Spotify first after v1
 
 ## Done (เสร็จแล้ว)
 
+- #32 · 2026-10-12 · main · Record the owner's answers: timer spoken at next launch, English UI, mic on at launch, launch at login and barge-in in v1, Spotify first after v1
 - #28 · 2026-10-12 · core · Wake-word spike: recorder, replay and the Apple engine
 - #31 · 2026-10-12 · ui · Mic on/off in Uriel's menu
 - #16 · 2026-10-12 · core · Phase 0.6: latency spike
