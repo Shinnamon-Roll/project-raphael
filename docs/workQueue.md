@@ -13,15 +13,16 @@ queue and worklog). The full history, with what changed in which files, is
 ## Received (งานที่ได้รับ)
 
 - #17 · 2026-10-11 · owner · Phase 0.7: wake-word spike
-- #24 · 2026-10-12 · owner · Split Thai text into spoken sentences
-- #25 · 2026-10-12 · owner · Run the latency spike in Thai
 
 ## In progress (กำลังทำ)
 
 - #16 · 2026-10-11 · core · Phase 0.6: latency spike
+- #25 · 2026-10-12 · core · Run the latency spike in Thai
+- #26 · 2026-10-12 · main · Give Uriel Kanade Tachibana's personality
 
 ## Done (เสร็จแล้ว)
 
+- #24 · 2026-10-12 · core · Split Thai text into spoken sentences
 - #23 · 2026-10-12 · main · Switch v1 to Thai
 - #22 · 2026-10-12 · main · Keep the owner's Halo state designs for step 1.8
 - #21 · 2026-10-12 · main · Record the owner's answers on privacy, offline and timers

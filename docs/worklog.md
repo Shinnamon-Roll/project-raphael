@@ -86,3 +86,8 @@ and the main session appends it.
 - 01:32 [main] #25 received: Run the latency spike in Thai
 - 01:32 [main] #23 started: Switch v1 to Thai
 - 01:34 [main] #23 done: Switch v1 to Thai → Switched v1's spoken language to Thai and recorded the Thai checks (DictationTranscriber, NLTokenizer, Kanya, 2.4x tokens) — CLAUDE.md, docs/plan.md, docs/adr/0003-on-device-voice.md, .claude/agents/core.md, .claude/agents/research.md
+- 01:35 [core] #24 started: Split Thai text into spoken sentences
+- 01:35 [core] #25 started: Run the latency spike in Thai
+- 01:55 [main] #26 received: Give Uriel Kanade Tachibana's personality
+- 01:55 [main] #26 started: Give Uriel Kanade Tachibana's personality
+- 02:10 [core] #24 done: Split Thai text into spoken sentences → SentenceSplitter now ends a Thai sentence at a space between Thai letters after 20 characters or a word-checked particle, never next to a digit, a Latin letter or after ๆ; 9 Thai tests; audit: ship — UrielCore/Sources/UrielCore/Voice/SentenceSplitter.swift, UrielCore/Tests/UrielCoreTests/Voice/SentenceSplitterTests.swift
