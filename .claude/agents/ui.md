@@ -13,7 +13,7 @@ Rules:
 - **SwiftUI first:** `MenuBarExtra` and `Settings`, with `LSUIElement` so there is no Dock icon. Use AppKit only where SwiftUI cannot do the job, with a comment saying why.
 - **Views only show state.** They observe `core`'s `@Observable` state on the main actor and call its methods. Views never call the Claude API, the audio engine or the Keychain directly.
 - Swift 6 language mode with complete concurrency checking, no warnings, and `swift format` clean.
-- **UI copy is English**, short and written inline. No localization this round.
+- **UI copy is Thai** (the menu mockup the owner picked, 2026-10-12), short and written inline. No localization this round.
 - **Permissions:**
   - Before each system prompt, explain on screen why Uriel needs the permission.
   - Each permission gets one plain-English usage string in `Info.plist`.

@@ -117,6 +117,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
    - Contents: a distinct variant of the `Halo` icon and an accessibility label for each state, and a Quit item.
+   - Pulled forward on 2026-10-12: a native macOS menu (the owner's pick) with a status line, "เกี่ยวกับ Uriel" and "ออกจาก Uriel". This step makes the status line live and adds pause listening and the timers; settings arrive with step 9.
    - The variants are drawn in `docs/design/halo-states.svg` (picked by the owner on 2026-10-12): idle, listening (also the follow-up window), thinking, speaking and offline.
    - Manual: light and dark mode, VoiceOver.
 9. **`ui`: settings.**

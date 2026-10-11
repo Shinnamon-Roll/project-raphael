@@ -20,6 +20,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #27 · 2026-10-12 · main · A native menu for Uriel: status, About and Quit
 - #26 · 2026-10-12 · main · Give Uriel Kanade Tachibana's personality
 - #25 · 2026-10-12 · core · Run the latency spike in Thai
 - #24 · 2026-10-12 · core · Split Thai text into spoken sentences
