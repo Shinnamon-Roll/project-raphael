@@ -88,7 +88,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Contents:
      - rank the female English voices: premium, then enhanced, then default;
      - save the voice's identifier;
-     - speak one utterance per sentence;
+     - speak one `AVSpeechUtterance` per sentence;
      - gate the wake word while speaking, plus about 300 ms.
    - Test: the ranking over a fake voice list.
    - Manual: listen to it.

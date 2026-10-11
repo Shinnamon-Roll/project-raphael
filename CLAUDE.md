@@ -103,7 +103,7 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - `AVSpeechSynthesizer` voices have a `gender`.
   - Premium and Enhanced voices are downloaded by the owner in System Settings › Accessibility › Read & Speak. No API lists voices that are not installed.
   - Installed female English voices: Samantha, Karen, Moira, Tessa and others; none is Premium or Enhanced (`say -v '?'`).
-  - The synthesizer queues utterances in order, so speak one per sentence.
+  - The synthesizer queues each `AVSpeechUtterance` in order, so speak one per sentence.
   - Personal Voice needs the owner's authorization.
 - **Opening apps:** `NSWorkspace.openApplication(at:configuration:)` needs no permission. Activation has been cooperative since macOS 14, so bringing an app to the front is not guaranteed.
 - **The Clock app has no public API.** It has no AppleScript dictionary, and AlarmKit is not available to native macOS apps. Its App Intents are reachable only through a user-built shortcut.
