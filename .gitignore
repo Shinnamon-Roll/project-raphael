@@ -8,3 +8,5 @@ Uriel.xcodeproj
 
 # Spike recordings stay on this Mac and are never committed.
 Spikes/**/audio/
+# Latency spike results hold Claude's answers and the blind rating key.
+Spikes/Latency/results/

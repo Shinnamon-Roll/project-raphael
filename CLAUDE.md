@@ -214,6 +214,7 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 - `UrielCore/` – the Swift package that holds all logic (ADR 0006): sources in `Sources/UrielCore/`, Swift Testing tests in `Tests/UrielCoreTests/`.
 - `project.yml` – the XcodeGen source of the thin `Uriel` app target: bundle ID, signing, hardened runtime, `INFOPLIST_KEY_*` settings, and the dependency on `UrielCore` (ADR 0006, ADR 0007). The generated `Uriel.xcodeproj` is git-ignored.
 - `Uriel/` – the app's sources, a synced folder: `UrielApp.swift` (the `MenuBarExtra`) and `Uriel.entitlements` (audio input only).
+- `Spikes/Latency/` – the latency spike, a command-line package that depends on `UrielCore` by path. Its `results/` is git-ignored.
 - `.claude/agents/` – `core`, `ui`, `research`, `answer`, `audit`.
 - `.claude/helpers/` – `queue.py`, `worklog.sh`, and graft's hook and statusline shims.
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
@@ -229,8 +230,8 @@ Run these from the repo root. The gates are build, test and lint; each must pass
 ```bash
 swift build --package-path UrielCore                    # build the core package
 swift test --package-path UrielCore                     # run its Swift Testing tests
-swift format lint --strict --recursive UrielCore Uriel  # check the style; prints nothing when clean
-swift format --in-place --recursive UrielCore Uriel     # fix the style
+swift format lint --strict --recursive UrielCore Uriel Spikes  # check the style; prints nothing when clean
+swift format --in-place --recursive UrielCore Uriel Spikes     # fix the style
 ```
 
 ```bash
@@ -250,6 +251,18 @@ security delete-generic-password -s com.shinnamon.uriel -a anthropic-api-key    
 ```
 
 The first time Uriel or a spike reads an item that `security` created, macOS asks: "Uriel wants to use your confidential information stored in "com.shinnamon.uriel" in your keychain." Enter the login password and choose **Always Allow**. Uriel's stable signature keeps that answer across rebuilds (ADR 0007). An unsigned spike asks again after each rebuild.
+
+The latency spike (`docs/plan.md`, Phase 0 step 6) is its own package. Its raw results, Claude's answers and the blind rating sheet go to `Spikes/Latency/results/`, which git ignores.
+
+```bash
+swift build --package-path Spikes/Latency                            # build the spike
+swift test --package-path Spikes/Latency                             # its Swift Testing tests
+swift run --package-path Spikes/Latency latency dry-run              # the whole matrix against a scripted fake API: no key, no network, no cost
+swift run --package-path Spikes/Latency latency tts                  # speak → didStart for 30 sentences, silent (volume 0)
+swift run --package-path Spikes/Latency latency smoke                # exactly one real request (Haiku 5.5, low); answer the keychain prompt with Always Allow
+swift run --package-path Spikes/Latency latency run                  # the full matrix against the API; stops before passing $3.00 (--budget USD)
+swift run --package-path Spikes/Latency latency report [DIR]         # summary.md and the blind sheet from a results folder (default: the newest)
+```
 
 ```bash
 graft ask "<question>" --source   # find code and explain it, with file:line

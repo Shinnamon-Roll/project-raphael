@@ -12,10 +12,11 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Received (งานที่ได้รับ)
 
-- #16 · 2026-10-11 · owner · Phase 0.6: latency spike
 - #17 · 2026-10-11 · owner · Phase 0.7: wake-word spike
 
 ## In progress (กำลังทำ)
+
+- #16 · 2026-10-11 · core · Phase 0.6: latency spike
 
 ## Done (เสร็จแล้ว)
 
