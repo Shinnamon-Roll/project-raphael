@@ -1,2 +1,10 @@
 # graft's local graph cache — regenerable, not committed (run `graft build`).
 /graft/
+
+# Build products and the generated Xcode project (project.yml is the source).
+build/
+.build/
+Uriel.xcodeproj
+
+# Spike recordings stay on this Mac and are never committed.
+Spikes/**/audio/

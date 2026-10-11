@@ -19,7 +19,7 @@ What Uriel does:
 4. "open <app>";
 5. timers Uriel keeps itself, with a notification and a spoken alert.
 
-Nothing else. The v1 plan is `docs/plan.md` (drafted by `research`, approved by the owner on 2026-10-11). Code is not started. The owner answered the v1 questions on 2026-10-11 (`docs/plan.md` § Owner answers). Phase 0 starts on the owner's order. Stop after each phase and wait for the owner.
+Nothing else. The v1 plan is `docs/plan.md` (drafted by `research`, approved by the owner on 2026-10-11). The owner answered the v1 questions (`docs/plan.md` § Owner answers) and ordered Phase 0 on 2026-10-11; `docs/workQueue.md` shows the current step. Stop after each phase and wait for the owner.
 
 **Later** (gathered, not planned; nothing here starts without a new plan): calendar and reminders (EventKit), contacts, mail and messages, music, volume, brightness and Focus, running the owner's Shortcuts, "what's on my screen" and computer use, Apple Foundation Models as an on-device router or offline fallback, escalating hard questions to a stronger model, memory across conversations, a more natural voice (Kokoro), launch at login.
 
@@ -204,8 +204,9 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 
 ## Repository layout
 
-There is no app code yet. The app's layout arrives with Phase 0 steps 1–2 of `docs/plan.md`.
+The thin `Uriel` app target and its `project.yml` arrive with Phase 0 step 2 of `docs/plan.md`.
 
+- `UrielCore/` – the Swift package that holds all logic (ADR 0006): sources in `Sources/UrielCore/`, Swift Testing tests in `Tests/UrielCoreTests/`.
 - `.claude/agents/` – `core`, `ui`, `research`, `answer`, `audit`.
 - `.claude/helpers/` – `queue.py`, `worklog.sh`, and graft's hook and statusline shims.
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
@@ -216,7 +217,14 @@ There is no app code yet. The app's layout arrives with Phase 0 steps 1–2 of `
 
 ## Commands
 
-Build, run and test commands arrive with Phase 0 steps 1–2 of `docs/plan.md`.
+Run these from the repo root. The gates are build, test and lint; each must pass with no warnings. The app's build and run commands arrive with Phase 0 step 2 of `docs/plan.md`.
+
+```bash
+swift build --package-path UrielCore              # build the core package
+swift test --package-path UrielCore               # run its Swift Testing tests
+swift format lint --strict --recursive UrielCore  # check the style; prints nothing when clean
+swift format --in-place --recursive UrielCore     # fix the style
+```
 
 ```bash
 graft ask "<question>" --source   # find code and explain it, with file:line

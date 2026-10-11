@@ -45,3 +45,12 @@ and the main session appends it.
 - 18:30 [main] #10 received: Record the signing identity on this Mac
 - 18:30 [main] #10 started: Record the signing identity on this Mac
 - 18:30 [main] #10 done: Record the signing identity on this Mac → Personal Team identity valid after adding the WWDR G3 intermediate — CLAUDE.md
+- 18:35 [main] #11 received: Phase 0.1: UrielCore package scaffold
+- 18:35 [main] #12 received: Phase 0.2: app shell (XcodeGen, MenuBarExtra, signing)
+- 18:35 [main] #13 received: Phase 0.3: Claude client with SSE parser
+- 18:35 [main] #14 received: Phase 0.4: Keychain store for the API key
+- 18:35 [main] #15 received: Phase 0.5: sentence splitter
+- 18:35 [main] #16 received: Phase 0.6: latency spike
+- 18:35 [main] #17 received: Phase 0.7: wake-word spike
+- 18:35 [core] #11 started: Phase 0.1: UrielCore package scaffold
+- 18:40 [core] #11 done: Phase 0.1: UrielCore package scaffold → added the UrielCore Swift package scaffold with a Swift Testing smoke test, build ignores, Commands and Repository layout; audit: ship — UrielCore/Package.swift, UrielCore/Sources/UrielCore/UrielCore.swift, UrielCore/Tests/UrielCoreTests/UrielCoreTests.swift, .gitignore, CLAUDE.md, docs/plan.md

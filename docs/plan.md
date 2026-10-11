@@ -1,6 +1,6 @@
 # Uriel v1 plan
 
-Drafted by `research` and approved by the owner on 2026-10-11. The owner answered the questions below on 2026-10-11. Phase 0 starts on the owner's order. Stop after each phase and wait for the owner.
+Drafted by `research` and approved by the owner on 2026-10-11. The owner answered the questions below and ordered Phase 0 on 2026-10-11. Stop after each phase and wait for the owner.
 
 ## Goal (v1, nothing else)
 
