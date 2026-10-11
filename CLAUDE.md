@@ -58,7 +58,7 @@ There is no "best" architecture, only trade-offs. Record each decision with its 
   - Cost: an always-on mic, wake-word accuracy still to be measured, and Apple voices less natural than neural TTS.
 - **Timers:** Uriel keeps them, with `UNUserNotificationCenter` and a spoken alert, not the Clock app (ADR 0004).
   - Gain: no setup, and Uriel can list and cancel them.
-  - Cost: they are not in Clock, and they are lost when Uriel quits unless persisted.
+  - Cost: they are not in Clock, and Uriel must save them and restore them after a restart (the owner wants them kept, 2026-10-12).
 - **Tools and secrets** (ADR 0005):
   - Claude gets typed, allowlisted tools only. There is no shell, AppleScript or `osascript` tool.
   - Every argument is re-validated in Swift.
@@ -293,10 +293,8 @@ Track unanswered questions here and settle them with the owner.
 
 - **Swift style and lint:** the Swift API Design Guidelines with `swift format` from the toolchain, or SwiftLint as well?
 - **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation; it is out of v1.
-- **Menu-bar states:** the `Halo` mark has no centre that can change. How should listening, thinking and speaking look (step 1.8)?
+- **Menu-bar states:** the `Halo` mark has no centre that can change. The owner asked Claude to design the states, perhaps with the halo turning into a different symbol (2026-10-12); the owner picks (step 1.8).
+- **A timer that ends while Uriel is not running:** speak about it at the next launch, or leave it to the notification?
 - **The voice:** which female English voice? An Apple Premium voice, or Kokoro later? The owner picks by ear.
-- **Privacy:** every utterance's text goes to the Claude API. Is that fine for everything the owner says near the Mac?
-- **No internet:** what should Uriel say or do?
-- **Timers:** keep them across a Uriel restart, or let them go?
 - **macOS 27:** will the owner upgrade? It changes Foundation Models and maybe the Speech APIs.
 - **Git branch model:** stay on `main`, or use feature branches?

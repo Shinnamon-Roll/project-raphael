@@ -16,6 +16,9 @@ builds in Shortcuts.
 Uriel runs the countdown itself. When a timer ends, it posts a notification
 through `UNUserNotificationCenter` and says so out loud.
 
+2026-10-12: the owner chose to keep timers across a Uriel restart, so Uriel
+saves its timers and restores them at launch.
+
 ## Trade-off
 
 - **Gain:** works with no setup by the owner; Uriel knows every timer it set,

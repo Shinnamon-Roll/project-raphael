@@ -75,3 +75,6 @@ and the main session appends it.
 - 00:36 [main] #20 received: Record the API key types and workspace scoping
 - 00:36 [main] #20 started: Record the API key types and workspace scoping
 - 00:37 [main] #20 done: Record the API key types and workspace scoping → Recorded that Console keys are identity-backed (sk-ant-usr personal keys), that an unscoped key needs anthropic-workspace-id, and that the owner's key is scoped to one workspace — CLAUDE.md
+- 01:02 [main] #21 received: Record the owner's answers on privacy, offline and timers
+- 01:02 [main] #21 started: Record the owner's answers on privacy, offline and timers
+- 01:03 [main] #21 done: Record the owner's answers on privacy, offline and timers → Recorded the owner's answers: utterance text to the API is fine, an in-character offline line, timers kept across restarts, Claude designs the menu-bar states — CLAUDE.md, docs/plan.md, docs/adr/0004-own-timers.md

@@ -96,6 +96,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - An `@MainActor @Observable` state machine: idle, listening, thinking, speaking, follow-up.
    - History is append-only (ADR 0008), with an idle reset and a turn cap.
    - On a failure, retry once, then speak a failure line. On a refusal, speak a short line.
+   - With no internet, the line is in character: Uriel cannot reach heaven (owner, 2026-10-12: "something like she did not link with heaven"). The exact words are picked at this step.
    - Tests: a fake transport and a fake voice; the order of sentences; append-only history; the reset after idle; the 429/529 path.
    - Defaults: the proposed column of the conversation-defaults table below.
 6. **`core`: tool loop and `open_app`.**
@@ -106,6 +107,8 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Tools: `set_timer` (1 s to 24 h, checked in Swift), `list_timers` and `cancel_timer`.
    - When a timer ends: a notification and a spoken alert.
    - Tests: a timer fires once; a cancelled timer never fires; injected clock.
+   - Timers are saved and restored when Uriel restarts (owner, 2026-10-12).
+   - Test: a saved timer is restored with its remaining time.
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
    - Contents: a distinct variant of the `Halo` icon and an accessibility label for each state, and a Quit item.
@@ -132,6 +135,15 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
 | Conversation defaults | the proposed column below | 1.5 |
 | Definition of Done for v1 | none; the owner uses Uriel and decides | 1.11 |
 
+Owner answers (2026-10-12):
+
+| Question | Answer | Unblocks |
+|---|---|---|
+| Every utterance's text goes to the Claude API | fine | — |
+| No internet | an in-character spoken line: Uriel cannot reach heaven | 1.5 |
+| Timers across a Uriel restart | kept: saved and restored | 1.7 |
+| Menu-bar states | Claude designs them; the halo may turn into a different symbol per state. The owner picks. | 1.8 |
+
 Conversation defaults (the owner chose the proposed column):
 
 | Setting | Options | Proposed |
@@ -144,7 +156,7 @@ Conversation defaults (the owner chose the proposed column):
 
 ## Later (not in this plan)
 
-Barge-in with echo cancellation, persisted timers, cache keep-alive, the server-side refusal fallback, conversation summaries, and everything on the "Later" list in `CLAUDE.md`.
+Barge-in with echo cancellation, cache keep-alive, the server-side refusal fallback, conversation summaries, and everything on the "Later" list in `CLAUDE.md`.
 
 ## Sources (accessed 2026-10-11)
 
