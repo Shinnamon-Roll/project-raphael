@@ -9,7 +9,7 @@ import NaturalLanguage
 /// sentence with a space rather than a full stop, is split at those spaces too.
 public struct SentenceSplitter: Sendable {
   /// Spoken once in place of each fenced code block, which makes no sense read aloud.
-  public static let codeBlockPlaceholder = "I've skipped a code block."
+  public static let codeBlockPlaceholder = "ชั้นข้ามโค้ดไปนะ"
 
   /// Received text not yet returned: the unfinished end of the current line.
   private var pending = ""

@@ -17,10 +17,10 @@ queue and worklog). The full history, with what changed in which files, is
 ## In progress (กำลังทำ)
 
 - #16 · 2026-10-11 · core · Phase 0.6: latency spike
-- #26 · 2026-10-12 · main · Give Uriel Kanade Tachibana's personality
 
 ## Done (เสร็จแล้ว)
 
+- #26 · 2026-10-12 · main · Give Uriel Kanade Tachibana's personality
 - #25 · 2026-10-12 · core · Run the latency spike in Thai
 - #24 · 2026-10-12 · core · Split Thai text into spoken sentences
 - #23 · 2026-10-12 · main · Switch v1 to Thai

@@ -229,7 +229,7 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
 - `.claude/settings.json` – hooks (graft, and `queue.py show` at session start), the statusline, Bash permissions for the helpers.
 - `.mcp.json` – the graft MCP server.
-- `docs/` – `plan.md` (the v1 plan), `adr/` (one decision per file with its trade-off), `design/` (the owner's picked drawings, such as `halo-states.svg`), `workQueue.md`, `worklog.md`.
+- `docs/` – `plan.md` (the v1 plan), `adr/` (one decision per file with its trade-off), `design/` (the owner's picked drawings, such as `halo-states.svg`), `persona.md` (Uriel's personality, Kanade Tachibana, picked by the owner), `workQueue.md`, `worklog.md`.
 - `graft/` – graft's local graph cache, git-ignored.
 
 ## Commands

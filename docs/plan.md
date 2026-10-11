@@ -103,6 +103,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - With no internet, the line is in character: Uriel cannot reach heaven (owner, 2026-10-12: "something like she did not link with heaven"). The exact words are picked at this step.
    - Tests: a fake transport and a fake voice; the order of sentences; append-only history; the reset after idle; the 429/529 path.
    - Defaults: the proposed column of the conversation-defaults table below.
+   - The system prompt carries Uriel's persona from `docs/persona.md` (the owner, 2026-10-12: Kanade Tachibana, calling the owner "คุณชิม่อน").
 6. **`core`: tool loop and `open_app`.**
    - Contents: an index of installed apps, matching that ignores case and diacritics, and `NSWorkspace`.
    - Test: the shape of the `tool_result`. An unknown app or tool returns `is_error`.
