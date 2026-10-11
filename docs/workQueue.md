@@ -12,12 +12,11 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Received (งานที่ได้รับ)
 
-- #7 · 2026-10-11 · owner · v1 plan and research findings (ADRs 0006-0008)
-
 ## In progress (กำลังทำ)
 
 ## Done (เสร็จแล้ว)
 
+- #7 · 2026-10-11 · research · v1 plan and research findings (ADRs 0006-0008)
 - #6 · 2026-10-11 · main · Rename the assistant to Uriel
 - #5 · 2026-10-11 · main · Agents: core, ui, research, answer, audit
 - #4 · 2026-10-11 · main · CLAUDE.md project guide and ADRs 0001-0005
