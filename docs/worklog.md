@@ -54,3 +54,5 @@ and the main session appends it.
 - 18:35 [main] #17 received: Phase 0.7: wake-word spike
 - 18:35 [core] #11 started: Phase 0.1: UrielCore package scaffold
 - 18:40 [core] #11 done: Phase 0.1: UrielCore package scaffold → added the UrielCore Swift package scaffold with a Swift Testing smoke test, build ignores, Commands and Repository layout; audit: ship — UrielCore/Package.swift, UrielCore/Sources/UrielCore/UrielCore.swift, UrielCore/Tests/UrielCoreTests/UrielCoreTests.swift, .gitignore, CLAUDE.md, docs/plan.md
+- 18:40 [ui] #12 started: Phase 0.2: app shell (XcodeGen, MenuBarExtra, signing)
+- 18:49 [ui] #12 done: Phase 0.2: app shell (XcodeGen, MenuBarExtra, signing) → added the XcodeGen app shell: menu-bar item with Quit, Personal Team signing, hardened runtime, audio-input entitlement; CLAUDE.md commands and layout; audit: ship — project.yml, Uriel/UrielApp.swift, Uriel/Uriel.entitlements, CLAUDE.md

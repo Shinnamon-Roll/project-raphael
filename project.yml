@@ -1,0 +1,36 @@
+# XcodeGen source for the thin Uriel app (ADR 0006). Run `xcodegen generate`
+# after editing; the generated Uriel.xcodeproj is git-ignored.
+name: Uriel
+options:
+  deploymentTarget:
+    macOS: "26.0"
+packages:
+  UrielCore:
+    path: UrielCore
+targets:
+  Uriel:
+    type: application
+    platform: macOS
+    sources:
+      - path: Uriel
+        type: syncedFolder
+    dependencies:
+      - package: UrielCore
+    scheme: {}
+    settings:
+      base:
+        PRODUCT_NAME: Uriel
+        # Fixed by the owner: changing it resets every permission (ADR 0007).
+        PRODUCT_BUNDLE_IDENTIFIER: com.shinnamon.uriel
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        # One stable identity, the owner's Personal Team (ADR 0007).
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: Apple Development
+        DEVELOPMENT_TEAM: TFNAQASAZ4
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: NO
+        CODE_SIGN_ENTITLEMENTS: Uriel/Uriel.entitlements
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSUIElement: YES

@@ -204,9 +204,9 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 
 ## Repository layout
 
-The thin `Uriel` app target and its `project.yml` arrive with Phase 0 step 2 of `docs/plan.md`.
-
 - `UrielCore/` – the Swift package that holds all logic (ADR 0006): sources in `Sources/UrielCore/`, Swift Testing tests in `Tests/UrielCoreTests/`.
+- `project.yml` – the XcodeGen source of the thin `Uriel` app target: bundle ID, signing, hardened runtime, `INFOPLIST_KEY_*` settings, and the dependency on `UrielCore` (ADR 0006, ADR 0007). The generated `Uriel.xcodeproj` is git-ignored.
+- `Uriel/` – the app's sources, a synced folder: `UrielApp.swift` (the `MenuBarExtra`) and `Uriel.entitlements` (audio input only).
 - `.claude/agents/` – `core`, `ui`, `research`, `answer`, `audit`.
 - `.claude/helpers/` – `queue.py`, `worklog.sh`, and graft's hook and statusline shims.
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
@@ -217,13 +217,21 @@ The thin `Uriel` app target and its `project.yml` arrive with Phase 0 step 2 of 
 
 ## Commands
 
-Run these from the repo root. The gates are build, test and lint; each must pass with no warnings. The app's build and run commands arrive with Phase 0 step 2 of `docs/plan.md`.
+Run these from the repo root. The gates are build, test and lint; each must pass with no warnings.
 
 ```bash
-swift build --package-path UrielCore              # build the core package
-swift test --package-path UrielCore               # run its Swift Testing tests
-swift format lint --strict --recursive UrielCore  # check the style; prints nothing when clean
-swift format --in-place --recursive UrielCore     # fix the style
+swift build --package-path UrielCore                    # build the core package
+swift test --package-path UrielCore                     # run its Swift Testing tests
+swift format lint --strict --recursive UrielCore Uriel  # check the style; prints nothing when clean
+swift format --in-place --recursive UrielCore Uriel     # fix the style
+```
+
+```bash
+brew install xcodegen                                   # once per Mac
+xcodegen generate                                       # regenerate Uriel.xcodeproj after editing project.yml
+xcodebuild -project Uriel.xcodeproj -scheme Uriel -configuration Debug -derivedDataPath build build   # build the app
+open build/Build/Products/Debug/Uriel.app               # run it; it appears in the menu bar, not the Dock
+pkill -x Uriel                                          # quit it from the CLI
 ```
 
 ```bash
