@@ -124,10 +124,17 @@ These are constraints, not choices. Re-check one before a design depends on it.
 
 - **Effort** goes in `output_config: {"effort": "low"}` and needs no beta header. Set it explicitly for voice; the defaults above are tuned for quality, not latency.
 - **Thinking:**
-  - Sonnet 5.5 rejects `thinking: {type: "disabled"}`; its lowest setting is `between_tools`.
-  - Haiku 5.5 rejects a non-default `temperature`.
+  - Sonnet 5.5 rejects `thinking: {type: "disabled"}`. Its lowest setting is `{"type": "between_tools"}`, accepted only at `low`, `medium` and `high` effort and with no other field; with it, effort cannot change mid-conversation.
+  - On Sonnet 5.5 with adaptive thinking, text between tool calls comes back as progress-update `thinking` blocks whose text is empty by default, so a voice goes quiet between tool calls. `between_tools` returns that text.
+  - Thinking blocks are tied to the model that wrote them. After a model switch mid-conversation, the API drops the blocks the new model cannot read.
   - A response can start with an empty thinking block, so read blocks by type.
-- **History (preserved thinking):** on Sonnet 5.5 and Haiku 5.5, editing or deleting earlier messages, the system prompt or the tools returns 400. Removing every thinking block is allowed.
+- **Sampling:** Sonnet 5.5 returns 400 for a non-default `temperature`, `top_p` or `top_k`, and Haiku 5.5 for a non-default `temperature`. Send none of them.
+- **History (preserved thinking):**
+  - On Fable 5.1, Opus 5.5, Sonnet 5.5 and Haiku 5.5, editing, reordering or deleting earlier messages, the system prompt or the tools returns 400.
+  - It is enforced by default for accounts created on or after 2026-08-31. Keep history append-only on any account.
+  - Send every block back with all its fields, including an empty `"thinking": ""`. An empty `signature` fails.
+  - Allowed: removing every thinking block, changing `effort`, `max_tokens` or `tool_choice`, and moving `cache_control`.
+  - The docs do not say whether key order matters. The client re-encodes blocks with sorted keys; the latency spike's follow-up turns test that.
 - **Forced tool use** (`tool_choice` `any` or `tool`) returns 400 on Sonnet 5.5, Opus 5.5 and Fable 5.1. Use `auto` with `strict: true` tools.
 - **Strict tools:**
   - Schemas cannot use `minimum` or `maximum`, so check ranges in Swift.
@@ -141,7 +148,7 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - The minimum cacheable prompt is 512 tokens on Sonnet 5.5 and Haiku 5.5. Shorter prompts silently do not cache.
   - Syntax: `{"type":"ephemeral"}` for 5 minutes, or with `"ttl":"1h"`.
   - Writes cost 1.25× the base input price (5-minute TTL) or 2× (1-hour TTL).
-  - Reads cost 0.1× the base input price, and 0.05× on Sonnet 5.5 and Opus 5.5.
+  - Reads cost 0.1× the base input price, and 0.05× on Sonnet 5.5 and Opus 5.5. The `claude-api` skill shows 0.1× for Sonnet 5.5; the pricing page wins.
 - **SDKs:** the official SDKs cover Python, TypeScript, C#, Go, Java, PHP and Ruby. There is no Swift SDK.
 - **Billing:** the owner's Max 5x plan includes $100 a month of API credits (<https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers>).
   - Claim them by linking one Console organization at claude.ai › Settings › Billing. The link cannot be changed without support.

@@ -58,3 +58,6 @@ and the main session appends it.
 - 18:49 [ui] #12 done: Phase 0.2: app shell (XcodeGen, MenuBarExtra, signing) → added the XcodeGen app shell: menu-bar item with Quit, Personal Team signing, hardened runtime, audio-input entitlement; CLAUDE.md commands and layout; audit: ship — project.yml, Uriel/UrielApp.swift, Uriel/Uriel.entitlements, CLAUDE.md
 - 18:50 [core] #13 started: Phase 0.3: Claude client with SSE parser
 - 19:12 [core] #13 done: Phase 0.3: Claude client with SSE parser → added the Claude Messages API client: request and message types that round-trip assistant content, a line-based SSE parser, streaming over an injected transport, 16 tests; audit: ship — UrielCore/Sources/UrielCore/Claude/, UrielCore/Tests/UrielCoreTests/Claude/
+- 19:12 [main] #18 received: Correct the Claude API facts from the official docs
+- 19:12 [main] #18 started: Correct the Claude API facts from the official docs
+- 19:13 [main] #18 done: Correct the Claude API facts from the official docs → corrected sampling, between_tools, text between tool calls, model-bound thinking and preserved-thinking scope from the official docs — CLAUDE.md
