@@ -42,3 +42,6 @@ and the main session appends it.
 - 17:38 [main] #9 received: Record the bundle ID com.shinnamon.uriel
 - 17:38 [main] #9 started: Record the bundle ID com.shinnamon.uriel
 - 17:38 [main] #9 done: Record the bundle ID com.shinnamon.uriel → bundle ID com.shinnamon.uriel; no v1 question blocks Phase 0 — CLAUDE.md, docs/plan.md, docs/adr/0007
+- 18:30 [main] #10 received: Record the signing identity on this Mac
+- 18:30 [main] #10 started: Record the signing identity on this Mac
+- 18:30 [main] #10 done: Record the signing identity on this Mac → Personal Team identity valid after adding the WWDR G3 intermediate — CLAUDE.md

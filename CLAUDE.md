@@ -98,7 +98,7 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - `SpeechDetector` only gates transcription and gives no end-of-speech signal. End of utterance is our own silence timer, then `finalize(through:)`.
   - Whether they also need the Speech Recognition permission is unverified.
 - **Wake-word engine candidate:** sherpa-onnx v1.13.8 has a prebuilt `osx-arm64` static library, but no SwiftPM package or macOS xcframework. Its English KWS model (zipformer, 3.3M) is about 5 MB in int8. Keywords are BPE tokens with `:boost` and `#threshold`. The licence of the weights is unverified.
-- **Signing:** this Mac has no code-signing identity yet. Ad-hoc signing ties the designated requirement to one build (TN3127), so permission and Keychain prompts return after rebuilds. Under the hardened runtime the mic needs `com.apple.security.device.audio-input`. The App Sandbox is required only for the Mac App Store.
+- **Signing:** this Mac has one valid `Apple Development` identity from the owner's Personal Team (team `TFNAQASAZ4`). It needs Apple's WWDR G3 intermediate (`AppleWWDRCAG3.cer` from apple.com) in the login keychain; without it `security find-identity -v -p codesigning` finds 0 valid identities. Ad-hoc signing ties the designated requirement to one build (TN3127), so permission and Keychain prompts return after rebuilds. Under the hardened runtime the mic needs `com.apple.security.device.audio-input`. The App Sandbox is required only for the Mac App Store.
 - **Voices:**
   - `AVSpeechSynthesizer` voices have a `gender`.
   - Premium and Enhanced voices are downloaded by the owner in System Settings › Accessibility › Read & Speak. No API lists voices that are not installed.
