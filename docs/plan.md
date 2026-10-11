@@ -81,6 +81,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - A ring buffer keeps about 1.5 s of audio, so the words right after "Uriel" reach the transcriber.
    - Test: synthetic buffers.
    - Manual: the mic prompt appears and the orange indicator is on.
+   - Pulled forward on 2026-10-12 (the owner's order, #31): a mic switch. `Microphone` in `UrielCore` starts and stops one `AVAudioEngine` input tap (`AudioEngineSource`) that drops its buffers. This step still adds the 16 kHz conversion, fan-out, the gate, the ring buffer, and a restart after a device change.
 2. **`core`: wake-word detector** behind a protocol, using the engine picked in 0.7.
    - Test: fixtures made with `say -o`, never the owner's voice.
    - Manual: 10 calls.
@@ -119,7 +120,8 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
    - Contents: a distinct variant of the `Halo` icon and an accessibility label for each state, and a Quit item.
-   - Pulled forward on 2026-10-12: a native macOS menu (the owner's pick) with a status line, "เกี่ยวกับ Uriel" and "ออกจาก Uriel". This step makes the status line live and adds pause listening and the timers; settings arrive with step 9.
+   - Pulled forward on 2026-10-12: a native macOS menu (the owner's pick) with a status line, "About Uriel" and "Quit Uriel". This step makes the status line live and adds pause listening and the timers; settings arrive with step 9.
+   - Also pulled forward on 2026-10-12 (the owner's order, #31): a "Microphone" checkmark item, off at launch, and a status line that follows it (off, starting, on, permission denied, failed). When access is denied, "Open Microphone Settings…" opens System Settings › Privacy & Security › Microphone. This step still adds the listening, thinking and speaking states and the `Halo` variants, decides whether the mic switch is the pause-listening item, and adds the timers.
    - The variants are drawn in `docs/design/halo-states.svg` (picked by the owner on 2026-10-12): idle, listening (also the follow-up window), thinking, speaking and offline.
    - Manual: light and dark mode, VoiceOver.
 9. **`ui`: settings.**
@@ -127,6 +129,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Test: the view model never echoes the key.
 10. **`ui`: permission onboarding.**
     - Explain first, then request the mic, notifications, and speech recognition if 1.3 shows it is needed.
+    - Since 2026-10-12 (#31) the mic prompt appears on the first switch-on of "Microphone", with the usage string from `project.yml`. This step still adds the explanation before it.
     - Manual: `tccutil reset`, then grant and deny each one.
 11. **Owner: v1 sign-off.**
     - There is no written Definition of Done. The owner uses Uriel day to day and says when v1 is done.

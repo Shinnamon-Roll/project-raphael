@@ -106,3 +106,6 @@ and the main session appends it.
 - 03:01 [core] #16 done: Phase 0.6: latency spike → English and Thai runs measured (no configuration met 1.5 s); the owner picked Sonnet 5.5 low with between_tools from the Thai blind rating, within $50 a month, and local tool confirmations — docs/spikes/latency.md, docs/adr/0010-chat-model-and-tool-confirmations.md, docs/plan.md, CLAUDE.md
 - 03:03 [main] #31 received: Mic on/off in Uriel's menu
 - 03:03 [ui] #31 started: Mic on/off in Uriel's menu
+- 03:14 [main] #32 received: Record the owner's answers: timer spoken at next launch, English UI, mic on at launch, launch at login and barge-in in v1, Spotify first after v1
+- 03:14 [main] #33 received: Launch at login
+- 03:20 [ui] #31 done: Mic on/off in Uriel's menu → A Microphone checkmark in Uriel's menu starts and stops one AVAudioEngine tap (off at launch; honest status for off, starting, on, denied, failed and a device change); English UI and mic usage string; audit: ship, follow-ups fixed — UrielCore/Sources/UrielCore/Audio/{Microphone,AudioEngineSource}.swift, UrielCore/Tests/UrielCoreTests/Audio/MicrophoneTests.swift, Uriel/UrielApp.swift, project.yml, CLAUDE.md, .claude/agents/ui.md, docs/plan.md

@@ -34,3 +34,5 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Uriel/Uriel.entitlements
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_LSUIElement: YES
+        # Shown in the mic prompt on the first switch-on.
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "Uriel listens for her name and your requests. Audio never leaves this Mac."
