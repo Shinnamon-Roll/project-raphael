@@ -12,12 +12,11 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Received (งานที่ได้รับ)
 
-- #5 · 2026-10-11 · owner · Agents: core, ui, research, answer, audit
-
 ## In progress (กำลังทำ)
 
 ## Done (เสร็จแล้ว)
 
+- #5 · 2026-10-11 · main · Agents: core, ui, research, answer, audit
 - #4 · 2026-10-11 · main · CLAUDE.md project guide and ADRs 0001-0005
 - #3 · 2026-10-11 · main · pr-lens and eli5 skills for diagrams
 - #2 · 2026-10-11 · main · graft wired into Claude Code

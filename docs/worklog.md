@@ -28,3 +28,5 @@ and the main session appends it.
 - 15:32 [main] #5 received: Agents: core, ui, research, answer, audit
 - 15:32 [main] #4 started: CLAUDE.md project guide and ADRs 0001-0005
 - 15:35 [main] #4 done: CLAUDE.md project guide and ADRs 0001-0005 → CLAUDE.md with purpose, v1 goal, Later list, glossary, decisions, macOS and Claude API facts, agents, git, queue, layout, commands, open questions; ADRs 0001-0005 — CLAUDE.md docs/adr/
+- 15:36 [main] #5 started: Agents: core, ui, research, answer, audit
+- 15:38 [main] #5 done: Agents: core, ui, research, answer, audit → agents core and ui (Opus, Swift), research (Opus, read-only), answer (Sonnet, read-only), audit (Fable, read-only, VERDICT); every skill on the shortlists checked to exist — .claude/agents/
