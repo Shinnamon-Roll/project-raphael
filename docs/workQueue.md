@@ -16,4 +16,5 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #2 · 2026-10-11 · main · graft wired into Claude Code
 - #1 · 2026-10-11 · main · Short memory: work queue, worklog, SessionStart hook
