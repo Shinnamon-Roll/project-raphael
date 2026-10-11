@@ -1,7 +1,8 @@
 # ADR 0005 — Typed, allowlisted tools and the API key in the Keychain
 
-- **Status:** proposed (the owner has not confirmed it yet)
+- **Status:** accepted
 - **Date:** 2026-10-11
+- **Decided by:** the owner
 - **Proposed by:** research, after the platform review
 
 ## Context

@@ -36,3 +36,6 @@ and the main session appends it.
 - 16:15 [main] #6 done: Rename the assistant to Uriel → assistant, app and wake word renamed from Raphael to Uriel; repo name kept until the owner renames it to code-uriel; dated note in ADR 0003 — CLAUDE.md docs/adr/ .claude/agents/
 - 16:15 [research] #7 started: v1 plan and research findings (ADRs 0006-0008)
 - 16:18 [research] #7 done: v1 plan and research findings (ADRs 0006-0008) → researched v1 (project format, wake word, SpeechAnalyzer, voice, self-trigger, Claude API, latency, conversation defaults); proposed Swift package + XcodeGen, stable signing with hardened runtime and no sandbox, append-only conversations; planned the wake-word and latency spikes, Phase 0 (7 steps) and Phase 1 (11 steps); corrected platform facts — docs/plan.md docs/adr/0006-0008 CLAUDE.md
+- 17:17 [main] #8 received: Record the owner's answers to the v1 questions
+- 17:17 [main] #8 started: Record the owner's answers to the v1 questions
+- 17:18 [main] #8 done: Record the owner's answers to the v1 questions → accepted ADRs 0005-0008, Personal Team signing, targets, defaults, no written DoD; bundle ID still open — CLAUDE.md, docs/plan.md, docs/adr/0005-0008, .claude/agents/core.md

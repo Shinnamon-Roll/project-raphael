@@ -1,7 +1,8 @@
 # ADR 0008 — Conversations are append-only; a full conversation ends instead of being trimmed
 
-- **Status:** proposed (the owner has not confirmed it yet)
+- **Status:** accepted
 - **Date:** 2026-10-11
+- **Decided by:** the owner
 - **Proposed by:** research, v1 planning
 
 ## Context

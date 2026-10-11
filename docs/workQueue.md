@@ -16,6 +16,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #8 · 2026-10-11 · main · Record the owner's answers to the v1 questions
 - #7 · 2026-10-11 · research · v1 plan and research findings (ADRs 0006-0008)
 - #6 · 2026-10-11 · main · Rename the assistant to Uriel
 - #5 · 2026-10-11 · main · Agents: core, ui, research, answer, audit

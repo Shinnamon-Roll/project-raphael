@@ -1,6 +1,7 @@
 # ADR 0007 — A stable local signing identity, hardened runtime, no App Sandbox
 
-- **Status:** proposed (the owner has not confirmed it yet; the identity is the owner's choice)
+- **Status:** accepted
+- **Decided by:** the owner
 - **Date:** 2026-10-11
 - **Proposed by:** research, v1 planning
 
@@ -17,8 +18,8 @@ App Sandbox is required only for the Mac App Store.
 ## Decision
 
 - Sign every build with one stable identity: an Apple Development certificate
-  from a free Apple ID Personal Team, or a self-signed code-signing certificate.
-  The owner chooses, and also picks the bundle ID once.
+  from the owner's free Apple ID Personal Team. The bundle ID is picked once and
+  never changed.
 - Hardened runtime on, with only `com.apple.security.device.audio-input`.
 - No App Sandbox in v1.
 
@@ -31,6 +32,8 @@ App Sandbox is required only for the Mac App Store.
 
 ## Alternatives
 
+- **A self-signed code-signing certificate:** needs no Apple ID, but is made
+  and trusted by hand. Not chosen.
 - **Ad-hoc signing:** no setup, but prompts return after rebuilds. Not chosen.
 - **A paid Developer ID:** not needed for a personal v1. Not chosen.
 - **App Sandbox:** more entitlements to manage, and it blocks Later items

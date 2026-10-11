@@ -1,6 +1,6 @@
 # Uriel v1 plan
 
-Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on the owner's order, once the blocking questions below are answered. Stop after each phase and wait for the owner.
+Drafted by `research` and approved by the owner on 2026-10-11. The owner answered the questions below on 2026-10-11; only the bundle ID is open. Phase 0 starts on the owner's order. Stop after each phase and wait for the owner.
 
 ## Goal (v1, nothing else)
 
@@ -13,7 +13,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
 ## Rules
 
 - **One step, one commit.** Each step is built by the named agent and audited by `audit` (Fable) before the next one starts.
-- **Decisions this plan relies on:** ADRs 0001–0004 (accepted) and 0005–0008 (proposed; confirmed before Phase 0).
+- **Decisions this plan relies on:** ADRs 0001–0008, all accepted.
 - **Tests:** Swift Testing proves logic wherever it can. Steps that need a mic, a speaker or a permission prompt name their manual check.
 
 ## Phase 0: groundwork
@@ -32,7 +32,8 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
      - Hardened runtime on.
    - Gate: `xcodegen generate` and `xcodebuild … build`.
    - Manual: the icon is in the menu bar and there is no Dock icon. `codesign -d -r-` is not a cdhash and stays the same across rebuilds.
-   - **Blocked on:** the signing identity, the bundle ID, and permission to install XcodeGen.
+   - Before it runs, the owner adds their Apple ID to Xcode once (Personal Team).
+   - **Blocked on:** the bundle ID.
 3. **`core`: Claude client.**
    - Contents: request and message types, a line-based SSE parser, and streaming over an injected transport.
    - Tests:
@@ -54,6 +55,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
      - cost per turn;
      - whether the tool calls are correct.
    - The owner rates the chat answers blind for "sounds like Claude". Budget: under $3.
+   - Target: at most 1.5 s at p50 to the first spoken word.
    - Settles: **the chat model and its effort**.
 7. **`core`: wake-word spike.**
    - Files: `Spikes/WakeWord`, a command-line tool with replay and live modes, run from Terminal.
@@ -66,7 +68,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
      - 2 h with no wake word: 1 h of podcasts or TV, and 1 h of the owner talking, including the near-words "Muriel", "you real", "your eel" and "oriel".
    - Measures: misses out of 60, false triggers per hour, detection delay, and the CPU and power of the tool and of the system speech process.
    - Settles: **the wake-word engine**, recorded as ADR 0009.
-   - **Blocked on:** consent to record, and the target numbers.
+   - Target: at most 1 false trigger per 8 h, and at least 57 of 60 calls detected.
 
 ## Phase 1: v1 features
 
@@ -95,7 +97,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
    - History is append-only (ADR 0008), with an idle reset and a turn cap.
    - On a failure, retry once, then speak a failure line. On a refusal, speak a short line.
    - Tests: a fake transport and a fake voice; the order of sentences; append-only history; the reset after idle; the 429/529 path.
-   - **Blocked on:** the conversation defaults.
+   - Defaults: the proposed column of the conversation-defaults table below.
 6. **`core`: tool loop and `open_app`.**
    - Contents: an index of installed apps, matching that ignores case and diacritics, and `NSWorkspace`.
    - Test: the shape of the `tool_result`. An unknown app or tool returns `is_error`.
@@ -114,23 +116,23 @@ Drafted by `research` and approved by the owner on 2026-10-11. Phase 0 starts on
 10. **`ui`: permission onboarding.**
     - Explain first, then request the mic, notifications, and speech recognition if 1.3 shows it is needed.
     - Manual: `tccutil reset`, then grant and deny each one.
-11. **Main session and owner: v1 acceptance run.**
-    - **Blocked on:** the Definition of Done.
+11. **Owner: v1 sign-off.**
+    - There is no written Definition of Done. The owner uses Uriel day to day and says when v1 is done.
 
-## Owner answers needed
+## Owner answers (2026-10-11)
 
-| Question | Proposed default | Blocks |
+| Question | Answer | Unblocks |
 |---|---|---|
-| Signing: a free Apple ID Personal Team, or a self-signed certificate? | Personal Team | 0.2 |
-| Bundle ID (changing it later resets permissions) | e.g. `com.shinnamon.uriel` | 0.2 |
+| Signing identity | a free Apple ID Personal Team | 0.2 |
+| Bundle ID (changing it later resets permissions) | **open**; e.g. `com.shinnamon.uriel` | 0.2 |
 | Install XcodeGen with Homebrew; confirm ADRs 0005–0008 | yes | 0.2 |
 | Wake-word target | at most 1 false trigger per 8 h, at least 57 of 60 detected | 0.7 |
-| Consent to about 2 h of local room and voice recordings, never committed | — | 0.7 |
+| About 2 h of local room and voice recordings, never committed | allowed | 0.7 |
 | Latency target | at most 1.5 s at p50 to the first spoken word | sign-off of 0.6 |
-| Conversation defaults | see the next table | 1.5 |
-| Definition of Done for v1 | — | 1.11 |
+| Conversation defaults | the proposed column below | 1.5 |
+| Definition of Done for v1 | none; the owner uses Uriel and decides | 1.11 |
 
-Conversation defaults (options; the owner decides):
+Conversation defaults (the owner chose the proposed column):
 
 | Setting | Options | Proposed |
 |---|---|---|

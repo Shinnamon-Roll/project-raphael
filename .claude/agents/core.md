@@ -22,7 +22,7 @@ Rules:
   - Stream the reply and hand each complete sentence to the voice as it arrives.
   - On 429, 529 or a network error, honour `retry-after` once, then speak a short failure line. Uriel never goes silent.
 - **Secrets:** the API key comes from the Keychain only. Never log it or any request header, never write it to a file, never read it from the environment.
-- **Tools** (ADR 0005, proposed):
+- **Tools** (ADR 0005):
   - Typed and allowlisted only. There is no generic shell, AppleScript or `osascript` tool.
   - Re-validate every argument in Swift before acting.
   - Answer an unknown tool or a bad argument with an error `tool_result`, never by guessing.
