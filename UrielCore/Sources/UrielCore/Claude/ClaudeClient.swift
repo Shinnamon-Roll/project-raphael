@@ -1,6 +1,6 @@
 import Foundation
 
-/// Supplies the Anthropic API key. The Keychain store conforms (Phase 0 step 4).
+/// Supplies the Anthropic API key. ``KeychainAPIKeyStore`` is the real one.
 ///
 /// The key is a secret: never log it, and never read it from the environment.
 public protocol APIKeyProvider: Sendable {

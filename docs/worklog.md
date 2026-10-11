@@ -61,3 +61,5 @@ and the main session appends it.
 - 19:12 [main] #18 received: Correct the Claude API facts from the official docs
 - 19:12 [main] #18 started: Correct the Claude API facts from the official docs
 - 19:13 [main] #18 done: Correct the Claude API facts from the official docs → corrected sampling, between_tools, text between tool calls, model-bound thinking and preserved-thinking scope from the official docs — CLAUDE.md
+- 19:13 [core] #14 started: Phase 0.4: Keychain store for the API key
+- 19:23 [core] #14 done: Phase 0.4: Keychain store for the API key → added KeychainAPIKeyStore (login keychain, service com.shinnamon.uriel, account anthropic-api-key) with a round-trip test on a throwaway service and the owner's security commands; audit: ship, corrupt key now reported as corrupt — UrielCore/Sources/UrielCore/Keychain/KeychainAPIKeyStore.swift, UrielCore/Tests/UrielCoreTests/Keychain/KeychainAPIKeyStoreTests.swift, UrielCore/Sources/UrielCore/Claude/ClaudeClient.swift, CLAUDE.md

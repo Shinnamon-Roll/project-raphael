@@ -241,6 +241,16 @@ open build/Build/Products/Debug/Uriel.app               # run it; it appears in 
 pkill -x Uriel                                          # quit it from the CLI
 ```
 
+The Claude API key is a generic password in the owner's login keychain: service `com.shinnamon.uriel`, account `anthropic-api-key` (`KeychainAPIKeyStore` in `UrielCore`). Tests use their own service name and never touch this item. The owner stores the key by hand:
+
+```bash
+security add-generic-password -U -s com.shinnamon.uriel -a anthropic-api-key -w   # store or replace it; -w last makes security prompt for the key, so it never reaches shell history
+security find-generic-password -s com.shinnamon.uriel -a anthropic-api-key        # check it is stored; prints the attributes, never the key (exit 44 when missing)
+security delete-generic-password -s com.shinnamon.uriel -a anthropic-api-key      # delete it
+```
+
+The first time Uriel or a spike reads an item that `security` created, macOS asks: "Uriel wants to use your confidential information stored in "com.shinnamon.uriel" in your keychain." Enter the login password and choose **Always Allow**. Uriel's stable signature keeps that answer across rebuilds (ADR 0007). An unsigned spike asks again after each rebuild.
+
 ```bash
 graft ask "<question>" --source   # find code and explain it, with file:line
 graft map                         # orient in the repo
