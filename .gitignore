@@ -10,3 +10,5 @@ Uriel.xcodeproj
 Spikes/**/audio/
 # Latency spike results hold Claude's answers and the blind rating key.
 Spikes/Latency/results/
+# Wake-word spike results hold transcripts of the owner's recordings.
+Spikes/WakeWord/results/

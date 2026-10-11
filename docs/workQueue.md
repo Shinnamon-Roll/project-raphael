@@ -18,6 +18,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 - #17 · 2026-10-12 · main · Phase 0.7: wake-word spike
 - #28 · 2026-10-12 · core · Wake-word spike: recorder, replay and the Apple engine
+- #31 · 2026-10-12 · ui · Mic on/off in Uriel's menu
 
 ## Done (เสร็จแล้ว)
 

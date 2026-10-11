@@ -104,3 +104,5 @@ and the main session appends it.
 - 02:55 [main] #30 started: Make Uriel speak politely with ค่ะ and คะ
 - 02:56 [main] #30 done: Make Uriel speak politely with ค่ะ and คะ → Uriel now ends statements with ค่ะ and questions with คะ, keeps ชั้น, and keeps chat to one or two short sentences, from the owner's Thai blind rating — docs/persona.md, Spikes/Latency/Sources/Latency/Fixtures.swift
 - 03:01 [core] #16 done: Phase 0.6: latency spike → English and Thai runs measured (no configuration met 1.5 s); the owner picked Sonnet 5.5 low with between_tools from the Thai blind rating, within $50 a month, and local tool confirmations — docs/spikes/latency.md, docs/adr/0010-chat-model-and-tool-confirmations.md, docs/plan.md, CLAUDE.md
+- 03:03 [main] #31 received: Mic on/off in Uriel's menu
+- 03:03 [ui] #31 started: Mic on/off in Uriel's menu

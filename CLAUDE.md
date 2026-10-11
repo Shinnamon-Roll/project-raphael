@@ -227,6 +227,7 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 - `project.yml` – the XcodeGen source of the thin `Uriel` app target: bundle ID, signing, hardened runtime, `INFOPLIST_KEY_*` settings, and the dependency on `UrielCore` (ADR 0006, ADR 0007). The generated `Uriel.xcodeproj` is git-ignored.
 - `Uriel/` – the app's sources, a synced folder: `UrielApp.swift` (the `MenuBarExtra`), `Uriel.entitlements` (audio input only) and `Assets.xcassets` (the menu-bar icon `Halo`, wings under a halo, picked by the owner on 2026-10-12: a template SVG that macOS tints for light and dark bars).
 - `Spikes/Latency/` – the latency spike, a command-line package that depends on `UrielCore` by path. Its `results/` is git-ignored.
+- `Spikes/WakeWord/` – the wake-word spike (Phase 0 step 7), a command-line package with no dependencies: it records the owner's calls and background audio, replays them through each engine behind the `WakeWordEngine` protocol, and scores them. Its `audio/` (the recordings) and `results/` (summaries and transcripts) are git-ignored.
 - `.claude/agents/` – `core`, `ui`, `research`, `answer`, `audit`.
 - `.claude/helpers/` – `queue.py`, `worklog.sh`, and graft's hook and statusline shims.
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
@@ -276,6 +277,18 @@ swift run --package-path Spikes/Latency latency smoke                # exactly o
 swift run --package-path Spikes/Latency latency run                  # the full matrix against the API; stops before passing $3.00 (--budget USD)
 swift run --package-path Spikes/Latency latency run --language th --warm-rounds 3 --budget 1.50   # the Thai run (Phase 0 step 6); dry-run and run take --language th|en (default en) and --warm-rounds N (default 10)
 swift run --package-path Spikes/Latency latency report [DIR]         # summary.md and the blind sheet from a results folder (default: the newest)
+```
+
+The wake-word spike (`docs/plan.md`, Phase 0 step 7) is its own package. Recordings go to `Spikes/WakeWord/audio/` as 16 kHz mono WAV, each with a JSON label beside it (the cue times), and never leave the Mac. `record` and `live` need the microphone permission for Terminal, granted once in the prompt (System Settings › Privacy & Security › Microphone). The first `replay` or `live` reserves Apple's Thai dictation model through `AssetInventory`.
+
+```bash
+swift build --package-path Spikes/WakeWord                       # build the spike
+swift test --package-path Spikes/WakeWord                        # its Swift Testing tests; one runs Apple's Thai model on a `say` file
+swift run --package-path Spikes/WakeWord wakeword synth          # synthetic sessions made with `say` into audio/synthetic/: no mic, never the owner's voice
+swift run --package-path Spikes/WakeWord wakeword record calls --phrase uriel --setting near   # 20 calls on visual cues, about 4 min; --phrase uriel|hey-uriel, --setting near|far|media, --count N
+swift run --package-path Spikes/WakeWord wakeword record background --kind talk --minutes 60  # no wake phrase, saved every 10 min; --kind media|talk
+swift run --package-path Spikes/WakeWord wakeword replay --engine apple [--context on] [PATHS] # score everything in audio/ (or PATHS) into results/<time>-replay-<engine>/summary.md
+swift run --package-path Spikes/WakeWord wakeword live --engine apple                         # mic → engine: prints each detection and the CPU per minute; a manual check only
 ```
 
 ```bash
