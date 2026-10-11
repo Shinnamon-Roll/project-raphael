@@ -16,12 +16,12 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## In progress (กำลังทำ)
 
-- #16 · 2026-10-11 · core · Phase 0.6: latency spike
 - #17 · 2026-10-12 · main · Phase 0.7: wake-word spike
 - #28 · 2026-10-12 · core · Wake-word spike: recorder, replay and the Apple engine
 
 ## Done (เสร็จแล้ว)
 
+- #16 · 2026-10-12 · core · Phase 0.6: latency spike
 - #30 · 2026-10-12 · main · Make Uriel speak politely with ค่ะ and คะ
 - #27 · 2026-10-12 · main · A native menu for Uriel: status, About and Quit
 - #26 · 2026-10-12 · main · Give Uriel Kanade Tachibana's personality

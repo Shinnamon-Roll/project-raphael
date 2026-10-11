@@ -13,7 +13,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
 ## Rules
 
 - **One step, one commit.** Each step is built by the named agent and audited by `audit` (Fable) before the next one starts.
-- **Decisions this plan relies on:** ADRs 0001–0008, all accepted.
+- **Decisions this plan relies on:** ADRs 0001–0008 and 0010, all accepted.
 - **Tests:** Swift Testing proves logic wherever it can. Steps that need a mic, a speaker or a permission prompt name their manual check.
 
 ## Phase 0: groundwork
@@ -59,6 +59,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Target: at most 1.5 s at p50 to the first spoken word.
    - Settles: **the chat model and its effort**.
    - 2026-10-12, Thai: the English run is done (no configuration met the target). After the switch to Thai, a short Thai run: the same five configurations and the 12 utterances in Thai, once cold and 3 times warm, under $1.50. The owner rates the Thai chat answers blind; the English blind sheet is dropped.
+   - **Done 2026-10-12** (`docs/spikes/latency.md`): no configuration met the target. The owner chose Sonnet 5.5 `low` with `between_tools` and tool turns that Uriel confirms herself (ADR 0010).
 7. **`core`: wake-word spike.**
    - Files: `Spikes/WakeWord`, a command-line tool with replay and live modes, run from Terminal.
    - Engines:
@@ -106,6 +107,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - The system prompt carries Uriel's persona from `docs/persona.md` (the owner, 2026-10-12: Kanade Tachibana, calling the owner "คุณชิม่อน").
 6. **`core`: tool loop and `open_app`.**
    - Contents: an index of installed apps, matching that ignores case and diacritics, and `NSWorkspace`.
+   - When a tool succeeds, Uriel speaks a fixed confirmation in the persona's style at once ("เปิด Safari แล้วค่ะ"), sends the `tool_result`, and does not speak Claude's reply when it only confirms again (ADR 0010).
    - Test: the shape of the `tool_result`. An unknown app or tool returns `is_error`.
    - Manual: "Uriel, open Safari".
 7. **`core`: timers.**
@@ -151,6 +153,8 @@ Owner answers (2026-10-12):
 | Timers across a Uriel restart | kept: saved and restored | 1.7 |
 | Menu-bar states | the halo turns into a different sign per state; the owner liked the design in `docs/design/halo-states.svg` | 1.8 |
 | Language of v1 | Thai: Uriel listens and speaks Thai. Token use (about 2.4× English) is checked in daily use. The voice is picked later. | 0.5–0.7, 1.3–1.5 |
+| Chat model and budget | "the best" within $50 a month: Sonnet 5.5 `low` with `between_tools`, the top of the Thai blind rating (ADR 0010) | 1.5 |
+| The missed 1.5 s target | Uriel confirms tool calls herself instead of waiting for Claude's second reply | 1.6 |
 
 Conversation defaults (the owner chose the proposed column):
 

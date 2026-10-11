@@ -71,6 +71,9 @@ There is no "best" architecture, only trade-offs. Record each decision with its 
   - Conversations are append-only. The system prompt and tools stay byte-stable, and a full conversation ends instead of being trimmed (ADR 0008).
   - Gain: agents build and test from the CLI, permissions survive rebuilds, and there are no 400s from edited history.
   - Cost: one Homebrew tool, a one-time signing setup, and long conversations end at the cap.
+- **Chat model** (ADR 0010, the owner, 2026-10-12): Sonnet 5.5 at `low` effort with `between_tools` thinking, the top of the owner's Thai blind rating, within a budget of $50 a month (`docs/spikes/latency.md`). Uriel confirms tool calls herself instead of waiting for Claude's second reply.
+  - Gain: the answers the owner rated best, steady tool calls, about $15 a month at 100 turns a day.
+  - Cost: chat reaches the first spoken word about 2.6 s after the owner stops speaking, over the 1.5 s target; the words after a tool are fixed lines.
 - **Codebase context:** Graft is wired into Claude Code (`.claude/settings.json`, `.mcp.json`, `.claude/skills/graft`). Use `graft ask` / `graft map` before exploring the repo by hand. `graft/` is a local cache and stays git-ignored.
 - **Diagrams:** the `pr-lens` and `eli5` skills (`.claude/skills/`, pinned in `skills-lock.json`) draw architecture and data-flow diagrams.
   - They run `npx @coldtea/pr-lens-cli@latest`, which is unpinned.
@@ -293,7 +296,6 @@ Track unanswered questions here and settle them with the owner.
 **Settled by a spike:**
 
 - **Wake-word engine (0.7):** sherpa-onnx keyword spotting, or continuous `SpeechAnalyzer` with a keyword match? Also "Uriel" or "Hey Uriel"?
-- **Chat model (0.6):** Sonnet 5.5 (proposed: closest to chatting with Claude) or Haiku 5.5 (fastest, cheapest), and at which effort?
 
 **Open, not blocking v1:**
 
