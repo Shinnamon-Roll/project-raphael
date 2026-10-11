@@ -18,8 +18,8 @@ App Sandbox is required only for the Mac App Store.
 ## Decision
 
 - Sign every build with one stable identity: an Apple Development certificate
-  from the owner's free Apple ID Personal Team. The bundle ID is picked once and
-  never changed.
+  from the owner's free Apple ID Personal Team. The bundle ID is
+  `com.shinnamon.uriel`, picked once and never changed.
 - Hardened runtime on, with only `com.apple.security.device.audio-input`.
 - No App Sandbox in v1.
 

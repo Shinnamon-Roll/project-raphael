@@ -39,3 +39,6 @@ and the main session appends it.
 - 17:17 [main] #8 received: Record the owner's answers to the v1 questions
 - 17:17 [main] #8 started: Record the owner's answers to the v1 questions
 - 17:18 [main] #8 done: Record the owner's answers to the v1 questions → accepted ADRs 0005-0008, Personal Team signing, targets, defaults, no written DoD; bundle ID still open — CLAUDE.md, docs/plan.md, docs/adr/0005-0008, .claude/agents/core.md
+- 17:38 [main] #9 received: Record the bundle ID com.shinnamon.uriel
+- 17:38 [main] #9 started: Record the bundle ID com.shinnamon.uriel
+- 17:38 [main] #9 done: Record the bundle ID com.shinnamon.uriel → bundle ID com.shinnamon.uriel; no v1 question blocks Phase 0 — CLAUDE.md, docs/plan.md, docs/adr/0007

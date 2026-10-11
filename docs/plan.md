@@ -1,6 +1,6 @@
 # Uriel v1 plan
 
-Drafted by `research` and approved by the owner on 2026-10-11. The owner answered the questions below on 2026-10-11; only the bundle ID is open. Phase 0 starts on the owner's order. Stop after each phase and wait for the owner.
+Drafted by `research` and approved by the owner on 2026-10-11. The owner answered the questions below on 2026-10-11. Phase 0 starts on the owner's order. Stop after each phase and wait for the owner.
 
 ## Goal (v1, nothing else)
 
@@ -33,7 +33,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Gate: `xcodegen generate` and `xcodebuild … build`.
    - Manual: the icon is in the menu bar and there is no Dock icon. `codesign -d -r-` is not a cdhash and stays the same across rebuilds.
    - Before it runs, the owner adds their Apple ID to Xcode once (Personal Team).
-   - **Blocked on:** the bundle ID.
+   - Bundle ID: `com.shinnamon.uriel`.
 3. **`core`: Claude client.**
    - Contents: request and message types, a line-based SSE parser, and streaming over an injected transport.
    - Tests:
@@ -124,7 +124,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
 | Question | Answer | Unblocks |
 |---|---|---|
 | Signing identity | a free Apple ID Personal Team | 0.2 |
-| Bundle ID (changing it later resets permissions) | **open**; e.g. `com.shinnamon.uriel` | 0.2 |
+| Bundle ID (changing it later resets permissions) | `com.shinnamon.uriel` | 0.2 |
 | Install XcodeGen with Homebrew; confirm ADRs 0005–0008 | yes | 0.2 |
 | Wake-word target | at most 1 false trigger per 8 h, at least 57 of 60 detected | 0.7 |
 | About 2 h of local room and voice recordings, never committed | allowed | 0.7 |
