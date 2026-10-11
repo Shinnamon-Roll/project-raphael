@@ -48,7 +48,9 @@ struct ScriptedTransport: HTTPTransport {
         && Self.blocks(of: message).contains { $0["type"]?.stringValue == "text" }
     }
     let firstWords = userTexts.first.flatMap { Self.blocks(of: $0).first?["text"]?.stringValue }
-    let utterance = Fixtures.utterances.first { $0.turns.first == firstWords }
+    let utterance = (Fixtures.utterances + Fixtures.thaiUtterances).first {
+      $0.turns.first == firstWords
+    }
     let afterTool = Self.blocks(of: messages.last).contains {
       $0["type"]?.stringValue == "tool_result"
     }
@@ -60,10 +62,10 @@ struct ScriptedTransport: HTTPTransport {
     case (.openApp(let names)?, false):
       toolName = "open_app"
       toolInput = .object(["name": .string(names.first ?? "")])
-    case (.setTimer(let seconds, let label)?, false):
+    case (.setTimer(let seconds, let labels)?, false):
       toolName = "set_timer"
       toolInput = .object([
-        "duration_seconds": .number(Double(seconds)), "label": .string(label ?? ""),
+        "duration_seconds": .number(Double(seconds)), "label": .string(labels?.first ?? ""),
       ])
     default:
       let replies = utterance?.scriptedReplies ?? []
@@ -71,15 +73,18 @@ struct ScriptedTransport: HTTPTransport {
       text = replies.indices.contains(turn) ? replies[turn] : "This is a dry run."
     }
 
-    // Usage at about four characters a token, plus a guess for the tool-use system prompt.
+    // Usage from `estimatedTokens`, plus a guess for the tool-use system prompt.
     let system = Self.blocks(of: body["system"]).compactMap { $0["text"]?.stringValue }.joined()
-    let tools = (try? body["tools"]?.jsonData().count) ?? 0
-    let prefixTokens = (system.count + tools) / 4 + 300
+    let tools = (try? body["tools"]?.jsonData()).map { String(decoding: $0, as: UTF8.self) } ?? ""
+    let prefixTokens = Self.estimatedTokens(system + tools) + 300
     let hit = await cache.contains(model + system)
-    let inputTokens = ((try? JSONValue.array(messages).jsonData().count) ?? 0) / 4
+    let history = (try? JSONValue.array(messages).jsonData()).map {
+      String(decoding: $0, as: UTF8.self)
+    }
+    let inputTokens = Self.estimatedTokens(history ?? "")
     let toolJSON = (try? toolInput?.jsonData()).map { String(decoding: $0, as: UTF8.self) } ?? ""
     let thinkingTokens = adaptive ? (effort == "low" ? 20 : 80) : 0
-    let outputTokens = (text.count + toolJSON.count) / 4 + thinkingTokens + 5
+    let outputTokens = Self.estimatedTokens(text + toolJSON) + thinkingTokens + 5
 
     var events: [(String, JSONValue)] = [
       (
@@ -153,6 +158,14 @@ struct ScriptedTransport: HTTPTransport {
       ["event: \(name)", "data: \(String(decoding: try data.jsonData(), as: UTF8.self))", ""]
     }
     return response(status: 200, lines: lines)
+  }
+
+  /// Tokens in `text`: about four characters a token, and 1.5 code points a token for Thai, which
+  /// takes about 2.4× the tokens of English (CLAUDE.md; the Thai fixtures come to 1.4).
+  /// shortcut: a guess, not the tokenizer; a real run's usage is the measure.
+  static func estimatedTokens(_ text: String) -> Int {
+    let thai = text.unicodeScalars.filter { (0x0E00...0x0E7F).contains($0.value) }.count
+    return Int(Double(text.unicodeScalars.count - thai) / 4 + Double(thai) / 1.5)
   }
 
   private func response(status: Int, lines: [String]) -> HTTPStreamResponse {

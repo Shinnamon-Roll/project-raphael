@@ -268,8 +268,10 @@ swift build --package-path Spikes/Latency                            # build the
 swift test --package-path Spikes/Latency                             # its Swift Testing tests
 swift run --package-path Spikes/Latency latency dry-run              # the whole matrix against a scripted fake API: no key, no network, no cost
 swift run --package-path Spikes/Latency latency tts                  # speak → didStart for 30 sentences, silent (volume 0)
+swift run --package-path Spikes/Latency latency tts --language th    # the same in Thai, with a female Thai voice (Kanya)
 swift run --package-path Spikes/Latency latency smoke                # exactly one real request (Haiku 5.5, low); answer the keychain prompt with Always Allow
 swift run --package-path Spikes/Latency latency run                  # the full matrix against the API; stops before passing $3.00 (--budget USD)
+swift run --package-path Spikes/Latency latency run --language th --warm-rounds 3 --budget 1.50   # the Thai run (Phase 0 step 6); dry-run and run take --language th|en (default en) and --warm-rounds N (default 10)
 swift run --package-path Spikes/Latency latency report [DIR]         # summary.md and the blind sheet from a results folder (default: the newest)
 ```
 

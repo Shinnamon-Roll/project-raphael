@@ -48,7 +48,9 @@ struct Report {
     lines += [
       "# Latency spike results (`\(name)`)",
       "",
-      "Mode `\(info.mode)`, started \(info.started.formatted(date: .abbreviated, time: .shortened)). "
+      "Mode `\(info.mode)`, language `\((info.language ?? .english).rawValue)`, "
+        + "\(info.warmRounds) warm rounds, started "
+        + "\(info.started.formatted(date: .abbreviated, time: .shortened)). "
         + "\(requests.count) requests in \(turns.count) turns, \(failed) failed. "
         + String(format: "Spent $%.4f of the $%.2f budget.", info.spent, info.budget),
     ]
@@ -287,7 +289,7 @@ struct Report {
 
   /// The sheet the owner rates, and the key that names the configuration behind each label.
   var blindSheet: (sheet: String, key: String) {
-    let chats = Fixtures.utterances.filter { $0.kind == .chat }
+    let chats = (info.language ?? .english).utterances.filter { $0.kind == .chat }
     let order = Self.blindOrder(
       configs: configs.map(\.id), utterances: chats.map(\.id), seed: Self.blindSeed)
     var sheet = [

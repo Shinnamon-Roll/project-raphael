@@ -48,7 +48,7 @@ struct ToolCheckTests {
   }
 
   @Test func timerNeedsTheExactDuration() throws {
-    let expected = ExpectedTool.setTimer(seconds: 600, label: nil)
+    let expected = ExpectedTool.setTimer(seconds: 600, labels: nil)
     #expect(
       checkToolCalls(
         [try call("set_timer", #"{"duration_seconds":600,"label":""}"#)], expected: expected
@@ -68,7 +68,7 @@ struct ToolCheckTests {
   }
 
   @Test func timerLabelMustContainTheExpectedWord() throws {
-    let expected = ExpectedTool.setTimer(seconds: 660, label: "pasta")
+    let expected = ExpectedTool.setTimer(seconds: 660, labels: ["pasta"])
     #expect(
       checkToolCalls(
         [try call("set_timer", #"{"duration_seconds":660,"label":"Pasta timer"}"#)],

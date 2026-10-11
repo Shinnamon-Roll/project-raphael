@@ -19,6 +19,8 @@ struct RunInfo: Codable, Sendable {
   /// Configurations left out, by ID, with the reason.
   var skipped: [String: String] = [:]
   var warmRounds: Int
+  /// `nil` in the runs from before the switch to Thai on 2026-10-12, which were all English.
+  var language: Language?
   var spent = 0.0
   /// Why the run stopped early, if it did.
   var stop: String?
@@ -73,7 +75,7 @@ struct Matrix {
   mutating func run(warmRounds: Int) async throws -> String? {
     let warmTags = Dictionary(uniqueKeysWithValues: configs.map { ($0.id, Self.newSessionTag()) })
     let order = Self.schedule(
-      configs: configs, utterances: Fixtures.utterances, warmRounds: warmRounds)
+      configs: configs, utterances: runner.language.utterances, warmRounds: warmRounds)
     var networkFailures = 0
     for (index, item) in order.enumerated() {
       let tag = item.phase == .cold ? Self.newSessionTag() : warmTags[item.config.id, default: ""]
@@ -173,7 +175,9 @@ func disabledThinkingSupport(
   if let supported = types.disabledSupported {
     return (supported, "the Models API says \(supported ? "yes" : "no")", [])
   }
-  guard let first = Fixtures.utterances.first?.firstTurnOnly else { return (false, "", []) }
+  guard let first = runner.language.utterances.first?.firstTurnOnly else {
+    return (false, "", [])
+  }
   var probeRunner = runner
   probeRunner.maxRequestsPerTurn = 1
   let outcome = await probeRunner.run(
@@ -214,14 +218,17 @@ struct ResultsDirectory: Sendable {
     return ResultsDirectory(url: url)
   }
 
-  /// The newest results folder that holds `file`.
-  static func newest(holding file: String) -> ResultsDirectory? {
+  /// The results folders that hold `file`, newest first.
+  static func all(holding file: String) -> [ResultsDirectory] {
     let names =
       (try? FileManager.default.contentsOfDirectory(atPath: root.path(percentEncoded: false))) ?? []
-    return names.sorted().reversed().lazy
+    return names.sorted().reversed()
       .map { ResultsDirectory(url: root.appending(path: $0, directoryHint: .isDirectory)) }
-      .first { FileManager.default.fileExists(atPath: $0.file(file).path(percentEncoded: false)) }
+      .filter { FileManager.default.fileExists(atPath: $0.file(file).path(percentEncoded: false)) }
   }
+
+  /// The newest results folder that holds `file`.
+  static func newest(holding file: String) -> ResultsDirectory? { all(holding: file).first }
 
   func file(_ name: String) -> URL { url.appending(path: name) }
 

@@ -7,39 +7,50 @@ enum LatencyCommand {
   static let usage = """
     usage: latency <mode> [options]
 
-      dry-run [--budget USD]  the whole matrix against a scripted fake API: no key, no network,
+      dry-run [--language th|en] [--warm-rounds N] [--budget USD]
+                              the whole matrix against a scripted fake API: no key, no network,
                               no cost. Its cost line estimates a real run's.
       smoke                   exactly one real request (Haiku 5.5, low), to check the key and
                               answer the keychain prompt once with Always Allow.
-      run [--budget USD]      the whole matrix against the Claude API. It stops before any
+      run [--language th|en] [--warm-rounds N] [--budget USD]
+                              the whole matrix against the Claude API. It stops before any
                               request that could pass the budget (default $3.00).
-      tts                     time from speak to didStart for about 30 sentences, silently.
+      tts [--language th|en]  time from speak to didStart for about 30 sentences, silently.
       report [DIR]            summary.md and the blind rating sheet from a results folder
                               (default: the newest one).
+
+    --language is what the owner speaks and Uriel answers in (default en). --warm-rounds is how
+    many times each utterance runs warm after its cold run (default 10). A mode refuses any flag
+    it does not list.
 
     Results go to Spikes/Latency/results/, which git ignores. The API key comes only from the
     login keychain (service com.shinnamon.uriel, account anthropic-api-key).
     """
 
-  /// Warm runs of each utterance per configuration; each also runs once cold.
+  /// Warm runs of each utterance per configuration unless `--warm-rounds` says otherwise; each
+  /// also runs once cold.
   static let warmRounds = 10
 
   static func main() async {
     let arguments = Array(CommandLine.arguments.dropFirst())
     do {
+      try checkFlags(arguments)
       switch arguments.first {
       case "dry-run":
         try await matrix(
           mode: "dry-run", key: "dry-run-no-key",
           transport: ScriptedTransport(eventDelay: .milliseconds(1)),
-          budget: budget(from: arguments))
+          budget: budget(from: arguments), language: language(from: arguments),
+          warmRounds: warmRounds(from: arguments))
       case "smoke": try await smoke()
       case "run":
         let budget = try budget(from: arguments)
+        let language = try language(from: arguments)
+        let warmRounds = try warmRounds(from: arguments)
         try await matrix(
           mode: "run", key: try await keychainKey(), transport: URLSessionTransport(),
-          budget: budget)
-      case "tts": try await tts()
+          budget: budget, language: language, warmRounds: warmRounds)
+      case "tts": try await tts(language: language(from: arguments))
       case "report":
         guard
           let directory = arguments.count > 1
@@ -66,6 +77,38 @@ enum LatencyCommand {
     return budget
   }
 
+  /// The flags each mode takes, as `usage` lists them.
+  static let flags: [String: Set<String>] = [
+    "dry-run": ["--language", "--warm-rounds", "--budget"],
+    "run": ["--language", "--warm-rounds", "--budget"],
+    "tts": ["--language"], "smoke": [], "report": [],
+  ]
+
+  /// Throws on a flag the mode does not take, so `smoke --language th` cannot quietly run English
+  /// and `report --language th` cannot read the flag as its folder.
+  static func checkFlags(_ arguments: [String]) throws {
+    guard let mode = arguments.first, let allowed = flags[mode] else { return }
+    if let flag = arguments.dropFirst().first(where: { $0.hasPrefix("--") && !allowed.contains($0) }
+    ) {
+      throw SpikeError("`\(mode)` does not take \(flag). Run `latency help` for the options.")
+    }
+  }
+
+  static func language(from arguments: [String]) throws -> Language {
+    guard let flag = arguments.firstIndex(of: "--language") else { return .english }
+    guard arguments.indices.contains(flag + 1),
+      let language = Language(rawValue: arguments[flag + 1])
+    else { throw SpikeError("--language needs th or en.") }
+    return language
+  }
+
+  static func warmRounds(from arguments: [String]) throws -> Int {
+    guard let flag = arguments.firstIndex(of: "--warm-rounds") else { return warmRounds }
+    guard arguments.indices.contains(flag + 1), let rounds = Int(arguments[flag + 1]), rounds > 0
+    else { throw SpikeError("--warm-rounds needs a whole number of rounds, such as 3.") }
+    return rounds
+  }
+
   /// Reads the key once. The first read by a newly built spike shows a keychain prompt.
   private static func keychainKey() async throws -> String {
     let store = KeychainAPIKeyStore()
@@ -88,13 +131,16 @@ enum LatencyCommand {
 
   /// Runs the whole matrix through `transport`, then writes the report next to the results.
   private static func matrix(
-    mode: String, key: String, transport: any HTTPTransport, budget: Double
+    mode: String, key: String, transport: any HTTPTransport, budget: Double, language: Language,
+    warmRounds: Int
   ) async throws {
     let directory = try ResultsDirectory.create(mode: mode)
     print("Results: \(directory.url.path(percentEncoded: false))")
     var info = RunInfo(
-      mode: mode, started: .now, budget: budget, configs: [], warmRounds: warmRounds)
-    let runner = ConversationRunner(transport: transport, key: key)
+      mode: mode, started: .now, budget: budget, configs: [], warmRounds: warmRounds,
+      language: language)
+    var runner = ConversationRunner(transport: transport, key: key)
+    runner.language = language
     var spending = Budget(cap: budget)
     var configs = Configuration.all
     for config in Configuration.all where config.thinking == .disabled {
@@ -112,10 +158,11 @@ enum LatencyCommand {
     }
     info.configs = configs.map(\.id)
     let order = Matrix.schedule(
-      configs: configs, utterances: Fixtures.utterances, warmRounds: warmRounds)
+      configs: configs, utterances: language.utterances, warmRounds: warmRounds)
     print(
-      "\(order.count) conversations; prefix about \(Fixtures.estimatedPrefixTokens) tokens "
-        + "(the cache needs 512); budget $\(String(format: "%.2f", budget)).")
+      "\(order.count) conversations in \(language.rawValue), \(warmRounds) warm rounds; prefix "
+        + "about \(Fixtures.estimatedPrefixTokens(for: language)) tokens (the cache needs 512); "
+        + "budget $\(String(format: "%.2f", budget)).")
     try directory.write(info, to: "run.json")
 
     var matrix = Matrix(runner: runner, configs: configs, directory: directory, budget: spending)
@@ -141,7 +188,7 @@ enum LatencyCommand {
     try directory.write(
       RunInfo(
         mode: "smoke", started: .now, budget: budget.cap, configs: [config.id], warmRounds: 0,
-        spent: budget.spent, stop: outcome.stop),
+        language: .english, spent: budget.spent, stop: outcome.stop),
       to: "run.json")
     for turn in outcome.turns { try directory.append(turn) }
     guard let request = outcome.turns.first?.requests.first else { return }
@@ -159,10 +206,10 @@ enum LatencyCommand {
       """)
   }
 
-  private static func tts() async throws {
-    let sentences = sampleSentences()
-    print("Speaking \(sentences.count) sentences at volume 0…")
-    let result = try await measureSpeechStart(sentences: sentences)
+  private static func tts(language: Language) async throws {
+    let sentences = sampleSentences(for: language)
+    print("Speaking \(sentences.count) sentences in \(language.rawValue) at volume 0…")
+    let result = try await measureSpeechStart(sentences: sentences, language: language)
     let directory = try ResultsDirectory.create(mode: "tts")
     try directory.write(result, to: "tts.json")
     print(
@@ -176,15 +223,15 @@ enum LatencyCommand {
   }
 
   /// Writes `summary.md`, `blind-sheet.md` and `blind-key.md` into `directory`, and returns the
-  /// summary.
+  /// summary. The text-to-speech measure is the newest one in the run's language.
   private static func writeReport(in directory: ResultsDirectory) throws -> String {
-    let speech = try ResultsDirectory.newest(holding: "tts.json").map {
-      try $0.read(SpeechStartResult.self, from: "tts.json")
-    }
+    let info = try directory.read(RunInfo.self, from: "run.json")
+    let speech = try ResultsDirectory.all(holding: "tts.json")
+      .map { try $0.read(SpeechStartResult.self, from: "tts.json") }
+      .first { ($0.language ?? .english) == (info.language ?? .english) }
     let report = Report(
-      name: directory.url.lastPathComponent,
-      info: try directory.read(RunInfo.self, from: "run.json"),
-      turns: try directory.turns(), speech: speech)
+      name: directory.url.lastPathComponent, info: info, turns: try directory.turns(),
+      speech: speech)
     let blind = report.blindSheet
     try directory.write(text: report.summary, to: "summary.md")
     try directory.write(text: blind.sheet, to: "blind-sheet.md")

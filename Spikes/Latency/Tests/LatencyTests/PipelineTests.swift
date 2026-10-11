@@ -119,13 +119,14 @@ struct PipelineTests {
     #expect(order.first { $0.phase == .prime }?.utterance.turns.count == 1)
   }
 
-  @Test func fixturesAreLongEnoughToCacheAndCoverThePlan() {
-    #expect(Fixtures.estimatedPrefixTokens >= 700)
-    let kinds = Fixtures.utterances.map(\.kind)
+  @Test(arguments: [Language.english, .thai])
+  func fixturesAreLongEnoughToCacheAndCoverThePlan(language: Language) {
+    #expect(Fixtures.estimatedPrefixTokens(for: language) >= 700)
+    let kinds = language.utterances.map(\.kind)
     #expect(kinds.filter { $0 == .chat }.count == 6)
     #expect(kinds.filter { $0 == .openApp }.count == 3)
     #expect(kinds.filter { $0 == .timer }.count == 3)
-    #expect(Fixtures.utterances.filter { $0.kind == .chat }.allSatisfy { $0.turns.count == 2 })
-    #expect(sampleSentences().count == 30)
+    #expect(language.utterances.filter { $0.kind == .chat }.allSatisfy { $0.turns.count == 2 })
+    #expect(sampleSentences(for: language).count == 30)
   }
 }

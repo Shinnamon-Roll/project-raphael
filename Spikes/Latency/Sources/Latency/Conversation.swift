@@ -88,14 +88,15 @@ func checkToolCalls(_ calls: [ToolUse], expected: ExpectedTool?) -> ToolCheck {
     let name = call.input["name"]?.stringValue ?? ""
     let correct = accepted.contains { folded($0) == folded(name) }
     return ToolCheck(correct: correct, note: "open_app \"\(name)\"")
-  case .setTimer(let seconds, let label):
+  case .setTimer(let seconds, let labels):
     guard call.name == "set_timer" else {
       return ToolCheck(correct: false, note: "called \(names)")
     }
     let duration = call.input["duration_seconds"]?.intValue
     let givenLabel = call.input["label"]?.stringValue ?? ""
     let correct =
-      duration == seconds && (label.map { folded(givenLabel).contains(folded($0)) } ?? true)
+      duration == seconds
+      && (labels.map { $0.contains { folded(givenLabel).contains(folded($0)) } } ?? true)
     let given = duration.map(String.init) ?? "no whole number"
     return ToolCheck(correct: correct, note: "set_timer \(given) s \"\(givenLabel)\"")
   }
@@ -109,6 +110,8 @@ struct ConversationRunner: Sendable {
   /// Voice answers are short; this only bounds a runaway answer and the worst-case cost.
   var maxTokens = 2_048
   var maxRequestsPerTurn = 3
+  /// The language of the system prompt; the utterances come in it too.
+  var language = Language.english
   /// The wait before the single retry when a 429 or 529 comes without `retry-after`.
   var fallbackRetryWait: Duration = .seconds(5)
   /// The longest `retry-after` honoured, so one answer cannot stall the run.
@@ -127,8 +130,8 @@ struct ConversationRunner: Sendable {
   }
 
   /// The system prompt with a session tag in front, so a new tag means a new cache prefix.
-  static func system(sessionTag: String) -> [String] {
-    ["Session \(sessionTag).", Fixtures.systemPrompt]
+  static func system(sessionTag: String, language: Language) -> [String] {
+    ["Session \(sessionTag).", language.systemPrompt]
   }
 
   /// The request for the next answer of a conversation.
@@ -136,7 +139,8 @@ struct ConversationRunner: Sendable {
     _ config: Configuration, sessionTag: String, messages: [Message]
   ) -> MessagesRequest {
     MessagesRequest(
-      model: config.model, maxTokens: maxTokens, system: Self.system(sessionTag: sessionTag),
+      model: config.model, maxTokens: maxTokens,
+      system: Self.system(sessionTag: sessionTag, language: language),
       tools: Fixtures.tools, messages: messages, effort: config.effort, thinking: config.thinking)
   }
 

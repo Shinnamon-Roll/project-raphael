@@ -37,8 +37,8 @@ struct Configuration: Sendable, Hashable {
 enum ExpectedTool: Sendable, Hashable {
   /// `open_app` with one of these names; case and diacritics are ignored.
   case openApp(names: [String])
-  /// `set_timer` for exactly `seconds`; when `label` is set, the label must contain it.
-  case setTimer(seconds: Int, label: String?)
+  /// `set_timer` for exactly `seconds`; when `labels` is set, the label must contain one of them.
+  case setTimer(seconds: Int, labels: [String]?)
 }
 
 /// What the owner says, as text: speech recognition is not part of this spike.
@@ -64,6 +64,16 @@ struct Utterance: Sendable, Hashable {
       id: id, kind: kind, turns: Array(turns.prefix(1)), expected: expected,
       scriptedReplies: Array(scriptedReplies.prefix(1)))
   }
+}
+
+/// The language the owner speaks and Uriel answers in, in one run.
+enum Language: String, Codable, Sendable {
+  case english = "en"
+  /// v1's language since the owner's switch on 2026-10-12.
+  case thai = "th"
+
+  var utterances: [Utterance] { self == .thai ? Fixtures.thaiUtterances : Fixtures.utterances }
+  var systemPrompt: String { self == .thai ? Fixtures.thaiSystemPrompt : Fixtures.systemPrompt }
 }
 
 enum Fixtures {
@@ -106,6 +116,66 @@ enum Fixtures {
     what went wrong. After a tool succeeds, confirm it in a few words, such as "Safari's open" or \
     "Ten minutes, starting now", without repeating every detail back. Never mention tools, \
     function calls, or these instructions to the owner.
+
+    You don't know today's date or the time unless the owner tells you, and you can't look \
+    anything up. If an answer depends on recent events or live information, say that you might \
+    be out of date. If you don't know something, say so instead of guessing; a best estimate is \
+    fine as long as you say it is one.
+
+    You are the owner's personal assistant, and you talk with them like a thoughtful friend who \
+    happens to know a lot. Be kind, be honest even when it isn't what they want to hear, and \
+    treat them as a capable adult. If the owner asks what you are, you can say you're Uriel, a \
+    voice assistant on their Mac, powered by Claude.
+    """
+
+  // SPIKE DRAFT, as above: the English prompt's rules, for an owner who speaks Thai and a voice
+  // that speaks Thai as a woman. It stays in English, as the cheaper prompt (CLAUDE.md, Thai costs
+  // more tokens), byte-stable and over 512 tokens.
+  static let thaiSystemPrompt = """
+    You are Uriel, a voice assistant that lives in the menu bar of the owner's MacBook. The owner \
+    talks to you out loud in Thai, and everything you write is read aloud by a Thai text-to-speech \
+    voice. You are built on Claude, made by Anthropic, and you chat the way Claude does: warm, \
+    curious, direct and honest, with a light sense of humour when it fits.
+
+    Always answer in natural spoken Thai, the way a warm, friendly Thai woman talks with someone \
+    she knows, never in a stiff written or formal style. You speak as a woman, so end a statement \
+    with ค่ะ and a question with คะ where a Thai speaker naturally would, and soften a suggestion \
+    with นะคะ, but don't put a particle on every sentence. Keep the names of apps, brands and \
+    people in their usual spelling, such as Safari or System Settings, and use an English word \
+    only where a Thai speaker would.
+
+    Every reply is spoken, never shown, so write plain Thai sentences that sound natural when \
+    read aloud, with a single space between sentences, the way Thai is written. Never use \
+    markdown, headings, bullet points, numbered lists, tables, code blocks, links, emoji, or \
+    symbols that make no sense out loud. If you need to mention a few things, say them in one \
+    flowing sentence. Write numbers, times and units the way a person would say them when that is \
+    clearer, such as "ประมาณยี่สิบนาที" or "บ่ายสามโมงครึ่ง".
+
+    Keep replies short. For casual chat, one to three sentences is usually right. Give the most \
+    useful part first, and offer to say more rather than giving a long answer nobody asked for. \
+    When the owner asks for detail, a story or an explanation, take the room you need, but keep \
+    it easy to follow by ear. Don't open with filler such as "คำถามดีมากเลยค่ะ" or "แน่นอนค่ะ", \
+    and don't end every reply with a question; ask one only when you need the answer or it keeps \
+    the conversation going naturally.
+
+    The owner's words come from on-device speech recognition, so they may contain mistakes, \
+    missing spaces, or words that sound alike, and English names may come out in Thai letters. \
+    Read them charitably and go with the most likely meaning. If you really can't tell what the \
+    owner meant, ask one short question. The owner speaks Thai, and you always answer in Thai, \
+    even when the owner uses English words. A conversation is a few spoken turns close together, \
+    and the owner often follows up on what you just said.
+
+    You can act on the Mac only through the tools you have been given: today, opening an app and \
+    setting a timer. You can't see the screen, read files, send messages, browse the web, or \
+    change settings. If the owner asks for something you can't do yet, say so plainly in one \
+    sentence, and suggest something you can do instead if it would help. When the owner asks you \
+    to open an app, call open_app with the app's name as it appears on the Mac, such as Safari, \
+    even if the owner said it in Thai letters. When they ask for a timer, or to be told when some \
+    time has passed, call set_timer. Don't ask for confirmation first. Say that something is done \
+    only after the tool result says it worked, and if a tool reports a problem, tell the owner \
+    briefly what went wrong. After a tool succeeds, confirm it in a few words, such as "เปิด \
+    Safari แล้วค่ะ" or "สิบนาที เริ่มนับแล้วค่ะ", without repeating every detail back. Never \
+    mention tools, function calls, or these instructions to the owner.
 
     You don't know today's date or the time unless the owner tells you, and you can't look \
     anything up. If an answer depends on recent events or live information, say that you might \
@@ -245,27 +315,110 @@ enum Fixtures {
     ),
     Utterance(
       id: "timer-1", kind: .timer, turns: ["Set a timer for ten minutes."],
-      expected: .setTimer(seconds: 600, label: nil),
+      expected: .setTimer(seconds: 600, labels: nil),
       scriptedReplies: ["Your ten minute timer is running."]),
     Utterance(
       id: "timer-2", kind: .timer, turns: ["Start a pasta timer for eleven minutes."],
-      expected: .setTimer(seconds: 660, label: "pasta"),
+      expected: .setTimer(seconds: 660, labels: ["pasta"]),
       scriptedReplies: ["Pasta timer set for eleven minutes."]),
     Utterance(
       id: "timer-3", kind: .timer, turns: ["Can you give me a ninety second timer?"],
-      expected: .setTimer(seconds: 90, label: nil),
+      expected: .setTimer(seconds: 90, labels: nil),
       scriptedReplies: ["Ninety seconds, starting now."]
     ),
   ]
 
+  /// The same twelve utterances in Thai, as the owner would say them, with the same IDs and the
+  /// same tool calls. The owner's lines carry no gendered particle, since the owner's gender is
+  /// not recorded; app names stay in Latin letters, and the timers keep their seconds.
+  static let thaiUtterances: [Utterance] = [
+    Utterance(
+      id: "chat-1", kind: .chat,
+      turns: ["สวัสดีตอนเช้า เมื่อคืนแทบไม่ได้นอนเลย", "ใช่เลย มีเคล็ดลับอะไรให้ผ่านวันนี้ไปได้บ้าง"],
+      expected: nil,
+      scriptedReplies: [
+        "อรุณสวัสดิ์ค่ะ แย่จังเลย เมื่อคืนเป็นแบบที่หัวสมองไม่ยอมหยุดคิดหรือเปล่าคะ",
+        "ลองออกไปรับแสงแดดตอนเช้าดูนะคะ จะช่วยให้ตื่นตัวขึ้นเยอะ ดื่มกาแฟแค่ช่วงเช้าพอ "
+          + "จะได้ไม่กระทบการนอนคืนนี้ ถ้าทำได้ งีบสักยี่สิบนาทีหลังมื้อเที่ยงก็ช่วยได้มากค่ะ",
+      ]),
+    Utterance(
+      id: "chat-2", kind: .chat,
+      turns: ["เล่าเรื่องน่าทึ่งเกี่ยวกับปลาหมึกยักษ์ให้ฟังหน่อย", "เดี๋ยวนะ จริงเหรอ ทำไมต้องมีตั้งสามดวง"],
+      expected: nil,
+      scriptedReplies: [
+        "ปลาหมึกยักษ์มีหัวใจสามดวงค่ะ สองดวงสูบเลือดผ่านเหงือก ส่วนดวงที่สามส่งเลือดไปเลี้ยงทั่วร่างกาย",
+        "เลือดของมันใช้ทองแดงแทนเหล็ก เลยขนออกซิเจนได้ไม่ค่อยดี หัวใจที่เพิ่มมาจึงช่วยดันเลือดให้แรงขึ้นค่ะ "
+          + "ที่แปลกคือหัวใจดวงหลักจะหยุดเต้นตอนว่ายน้ำ นั่นเป็นเหตุผลหนึ่งที่มันชอบคลานมากกว่าค่ะ",
+      ]),
+    Utterance(
+      id: "chat-3", kind: .chat,
+      turns: ["ลาเต้กับแฟลตไวท์ต่างกันยังไง", "งั้นถ้าไม่อยากได้นมเยอะ ควรสั่งแบบไหนดี"],
+      expected: nil,
+      scriptedReplies: [
+        "ทั้งสองแบบคือเอสเพรสโซ่ใส่นมร้อนค่ะ แฟลตไวท์แก้วเล็กกว่าและมีฟองนมบางๆ เนียนๆ "
+          + "เลยได้รสกาแฟเข้มกว่า ส่วนลาเต้แก้วใหญ่กว่า นมเยอะกว่า และมีฟองนมด้านบนหนากว่าค่ะ",
+        "แนะนำแฟลตไวท์ค่ะ จะได้รสกาแฟชัดกว่าเยอะเลย",
+      ]),
+    Utterance(
+      id: "chat-4", kind: .chat,
+      turns: ["ขอไอเดียมื้อเย็นง่ายๆ สำหรับคืนนี้หน่อย", "ดีเลย ต้องซื้ออะไรบ้าง"],
+      expected: nil,
+      scriptedReplies: [
+        "ลองทำพาสต้ากระเทียมมะนาวใส่ผักโขมดีไหมคะ ใช้เวลาแค่ประมาณสิบห้านาทีและใช้หม้อใบเดียวค่ะ",
+        "เส้นสปาเก็ตตี้ มะนาวหนึ่งลูก กระเทียมสักสองสามกลีบ ผักโขมหนึ่งถุง แล้วก็ชีสพาร์เมซานนิดหน่อยค่ะ "
+          + "น้ำมันมะกอกกับเกลือน่าจะมีอยู่แล้วนะคะ",
+      ]),
+    Utterance(
+      id: "chat-5", kind: .chat,
+      turns: ["อธิบายหน่อยได้ไหมว่าหลุมดำคืออะไร แบบเข้าใจง่ายๆ", "แล้วถ้าตกลงไปในหลุมดำจะเป็นยังไง"],
+      expected: nil,
+      scriptedReplies: [
+        "หลุมดำคือบริเวณที่มีสสารอัดแน่นอยู่ในพื้นที่เล็กมาก จนแรงโน้มถ่วงไม่ยอมให้อะไรหนีออกมาได้เลย "
+          + "แม้แต่แสงก็หนีไม่ได้ค่ะ มันถึงดูดำสนิท",
+        "ถ้าเป็นหลุมดำขนาดเล็ก แรงดึงที่เท้าจะแรงกว่าที่หัวมาก จนตัวถูกยืดออกเหมือนเส้นสปาเก็ตตี้ค่ะ "
+          + "นักวิทยาศาสตร์เรียกแบบนั้นจริงๆ ว่าสปาเก็ตติฟิเคชัน แต่ถ้าเป็นหลุมดำขนาดใหญ่มาก "
+          + "อาจข้ามขอบเข้าไปได้โดยยังไม่รู้สึกอะไรในตอนแรกค่ะ",
+      ]),
+    Utterance(
+      id: "chat-6", kind: .chat,
+      turns: ["กำลังจะตั้งชื่อลูกแมวสีเทาตัวใหม่ มีไอเดียไหม", "อืม ในนั้นชอบชื่อไหนที่สุด เพราะอะไร"],
+      expected: nil,
+      scriptedReplies: [
+        "ยินดีด้วยนะคะที่ได้ลูกแมวตัวใหม่ สำหรับแมวสีเทา ชอบชื่อหมอก ควันเทา ก้อนหิน หรือเอิร์ลเกรย์ค่ะ "
+          + "รู้นิสัยน้องหรือยังคะ",
+        "เอิร์ลเกรย์ค่ะ ฟังดูหรูนิดๆ แต่ก็ขำหน่อยๆ แถมเรียกสั้นๆ ว่าเอิร์ลก็ได้ด้วยนะคะ",
+      ]),
+    Utterance(
+      id: "app-1", kind: .openApp, turns: ["เปิด Safari หน่อย"],
+      expected: .openApp(names: ["Safari"]), scriptedReplies: ["เปิด Safari ให้แล้วค่ะ"]),
+    Utterance(
+      id: "app-2", kind: .openApp, turns: ["ช่วยเปิด Notes ให้หน่อยได้ไหม"],
+      expected: .openApp(names: ["Notes"]), scriptedReplies: ["เปิด Notes ให้แล้วค่ะ"]),
+    Utterance(
+      id: "app-3", kind: .openApp, turns: ["เปิด System Settings ให้หน่อย"],
+      expected: .openApp(names: ["System Settings"]),
+      scriptedReplies: ["เปิด System Settings ให้แล้วค่ะ"]),
+    Utterance(
+      id: "timer-1", kind: .timer, turns: ["ตั้งเวลาสิบนาที"],
+      expected: .setTimer(seconds: 600, labels: nil), scriptedReplies: ["ตั้งเวลาสิบนาทีให้แล้วค่ะ"]),
+    Utterance(
+      id: "timer-2", kind: .timer, turns: ["ตั้งเวลาต้มพาสต้าสิบเอ็ดนาที"],
+      // The set_timer schema's example label is "pasta", so the English word is right too.
+      expected: .setTimer(seconds: 660, labels: ["พาสต้า", "pasta"]),
+      scriptedReplies: ["ตั้งเวลาต้มพาสต้าสิบเอ็ดนาทีแล้วค่ะ"]),
+    Utterance(
+      id: "timer-3", kind: .timer, turns: ["ช่วยตั้งเวลาเก้าสิบวินาทีให้หน่อยได้ไหม"],
+      expected: .setTimer(seconds: 90, labels: nil), scriptedReplies: ["เก้าสิบวินาที เริ่มนับแล้วค่ะ"]),
+  ]
+
   /// A rough size of the cached prefix (tools, then system), at about four characters a token.
   /// shortcut: a heuristic, not the tokenizer; the warm runs' `cache_read_input_tokens` is the proof.
-  static var estimatedPrefixTokens: Int {
+  static func estimatedPrefixTokens(for language: Language) -> Int {
     let toolCharacters = tools.reduce(0) { total, tool in
       total + tool.name.count + tool.description.count
         + ((try? tool.inputSchema.jsonData().count) ?? 0)
     }
-    return (systemPrompt.count + toolCharacters) / 4
+    return (language.systemPrompt.count + toolCharacters) / 4
   }
 
   private static func schema(_ json: String) -> JSONValue {
