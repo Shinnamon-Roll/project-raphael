@@ -20,6 +20,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #22 · 2026-10-12 · main · Keep the owner's Halo state designs for step 1.8
 - #21 · 2026-10-12 · main · Record the owner's answers on privacy, offline and timers
 - #20 · 2026-10-12 · main · Record the API key types and workspace scoping
 - #19 · 2026-10-12 · main · Menu-bar icon: the Halo mark

@@ -225,7 +225,7 @@ Every `queue.py` move also writes its worklog line, so a queued item needs no se
 - `.claude/skills/` – `graft`, `pr-lens`, `eli5` (pinned in `skills-lock.json`).
 - `.claude/settings.json` – hooks (graft, and `queue.py show` at session start), the statusline, Bash permissions for the helpers.
 - `.mcp.json` – the graft MCP server.
-- `docs/` – `plan.md` (the v1 plan), `adr/` (one decision per file with its trade-off), `workQueue.md`, `worklog.md`.
+- `docs/` – `plan.md` (the v1 plan), `adr/` (one decision per file with its trade-off), `design/` (the owner's picked drawings, such as `halo-states.svg`), `workQueue.md`, `worklog.md`.
 - `graft/` – graft's local graph cache, git-ignored.
 
 ## Commands
@@ -293,7 +293,6 @@ Track unanswered questions here and settle them with the owner.
 
 - **Swift style and lint:** the Swift API Design Guidelines with `swift format` from the toolchain, or SwiftLint as well?
 - **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation; it is out of v1.
-- **Menu-bar states:** the `Halo` mark has no centre that can change. The owner asked Claude to design the states, perhaps with the halo turning into a different symbol (2026-10-12); the owner picks (step 1.8).
 - **A timer that ends while Uriel is not running:** speak about it at the next launch, or leave it to the notification?
 - **The voice:** which female English voice? An Apple Premium voice, or Kokoro later? The owner picks by ear.
 - **macOS 27:** will the owner upgrade? It changes Foundation Models and maybe the Speech APIs.

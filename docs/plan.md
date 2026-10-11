@@ -112,6 +112,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Manual: the alert arrives after the Mac sleeps.
 8. **`ui`: menu status.**
    - Contents: a distinct variant of the `Halo` icon and an accessibility label for each state, and a Quit item.
+   - The variants are drawn in `docs/design/halo-states.svg` (picked by the owner on 2026-10-12): idle, listening (also the follow-up window), thinking, speaking and offline.
    - Manual: light and dark mode, VoiceOver.
 9. **`ui`: settings.**
    - Contents: a `SecureField` for the API key into the Keychain, and a voice picker with preview.
@@ -142,7 +143,7 @@ Owner answers (2026-10-12):
 | Every utterance's text goes to the Claude API | fine | — |
 | No internet | an in-character spoken line: Uriel cannot reach heaven | 1.5 |
 | Timers across a Uriel restart | kept: saved and restored | 1.7 |
-| Menu-bar states | Claude designs them; the halo may turn into a different symbol per state. The owner picks. | 1.8 |
+| Menu-bar states | the halo turns into a different sign per state; the owner liked the design in `docs/design/halo-states.svg` | 1.8 |
 
 Conversation defaults (the owner chose the proposed column):
 

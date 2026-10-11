@@ -78,3 +78,6 @@ and the main session appends it.
 - 01:02 [main] #21 received: Record the owner's answers on privacy, offline and timers
 - 01:02 [main] #21 started: Record the owner's answers on privacy, offline and timers
 - 01:03 [main] #21 done: Record the owner's answers on privacy, offline and timers → Recorded the owner's answers: utterance text to the API is fine, an in-character offline line, timers kept across restarts, Claude designs the menu-bar states — CLAUDE.md, docs/plan.md, docs/adr/0004-own-timers.md
+- 01:21 [main] #22 received: Keep the owner's Halo state designs for step 1.8
+- 01:22 [main] #22 started: Keep the owner's Halo state designs for step 1.8
+- 01:22 [main] #22 done: Keep the owner's Halo state designs for step 1.8 → Saved the five Halo state icons the owner liked (idle, listening, thinking, speaking, offline) for step 1.8 — docs/design/halo-states.svg, docs/plan.md, CLAUDE.md
