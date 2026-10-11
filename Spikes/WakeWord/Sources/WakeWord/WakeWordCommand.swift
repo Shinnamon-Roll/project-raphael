@@ -169,19 +169,25 @@ enum WakeWordCommand {
     let microphone = try await Microphone()
     print(
       """
-      Listening with \(engine.name). Say "Uriel" or "Hey Uriel"; Ctrl-C stops.
+      Listening with \(engine.name) on \(microphone.deviceName). Say "Uriel" or "Hey Uriel"; \
+      Ctrl-C stops.
       The orange microphone indicator stays on in the menu bar while this runs.
       """)
     let started = Date.now
+    let countsService = engine.usesSpeechService
     let cpuReporter = Task {
-      var last = (processCPUSeconds(), speechServiceCPUSeconds())
+      func read() -> (Double, Double?) {
+        (processCPUSeconds(), countsService ? speechServiceCPUSeconds() : nil)
+      }
+      var last = read()
       while !Task.isCancelled {
         try await Task.sleep(for: .seconds(60))
-        let now = (processCPUSeconds(), speechServiceCPUSeconds())
+        let now = read()
         let service = cpuDelta(from: last.1, to: now.1).map { String(format: "%.1f s", $0) }
         print(
-          "  CPU in the last minute: this process \(String(format: "%.1f s", now.0 - last.0)), "
-            + "speech service (localspeechrecognition) \(service ?? "not readable")")
+          "  CPU in the last minute: this process \(String(format: "%.1f s", now.0 - last.0))"
+            + (countsService
+              ? ", speech service (localspeechrecognition) \(service ?? "not readable")" : ""))
         last = now
       }
     }

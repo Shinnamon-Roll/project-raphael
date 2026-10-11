@@ -3,12 +3,20 @@ import Synchronization
 
 /// The default input device as contiguous chunks of 16 kHz mono samples, through one
 /// `AVAudioEngine` tap. The grant belongs to Terminal, the responsible process.
+///
+/// While it runs, the Mac does not idle-sleep, so an hour of background is not cut short. The
+/// stream ends on Ctrl-C, or when the audio input changes (a headset connects, say), so the caller
+/// saves what it captured instead of waiting forever.
 final class Microphone {
   let chunks: AsyncStream<[Float]>
+  /// The input device's name, so the owner can check it is the Mac's own microphone.
+  let deviceName: String
   private let continuation: AsyncStream<[Float]>.Continuation
   private let engine = AVAudioEngine()
   private var interrupt: (any DispatchSourceSignal)?
   private var tap: Tap?
+  private var observer: (any NSObjectProtocol)?
+  private var activity: (any NSObjectProtocol)?
 
   init() async throws {
     guard await AVCaptureDevice.requestAccess(for: .audio) else {
@@ -17,6 +25,7 @@ final class Microphone {
           + "Security › Microphone, then run this again.")
     }
     (chunks, continuation) = AsyncStream<[Float]>.makeStream()
+    deviceName = AVCaptureDevice.default(for: .audio)?.localizedName ?? "the default input"
     let input = engine.inputNode
     let format = input.outputFormat(forBus: 0)
     guard format.sampleRate > 0, format.channelCount > 0 else {
@@ -31,8 +40,16 @@ final class Microphone {
       buffer, _ in
       if let samples = tap.convert(buffer) { continuation.yield(samples) }
     }
+    observer = NotificationCenter.default.addObserver(
+      forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil
+    ) { _ in
+      tap.inputChanged.store(true, ordering: .relaxed)
+      continuation.finish()
+    }
     engine.prepare()
     try engine.start()
+    activity = ProcessInfo.processInfo.beginActivity(
+      options: [.idleSystemSleepDisabled], reason: "Recording audio for the wake-word spike")
     // Ctrl-C ends the stream, so the caller saves what it recorded instead of dying mid-file.
     signal(SIGINT, SIG_IGN)
     let source = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
@@ -47,6 +64,14 @@ final class Microphone {
     continuation.finish()
     interrupt?.cancel()
     signal(SIGINT, SIG_DFL)
+    if let observer { NotificationCenter.default.removeObserver(observer) }
+    if let activity { ProcessInfo.processInfo.endActivity(activity) }
+    (observer, activity) = (nil, nil)
+    if let tap, tap.inputChanged.load(ordering: .relaxed) {
+      print(
+        "Warning: the audio input changed (a headset or another microphone?), so the recording "
+          + "stopped early. What was captured until then is kept.")
+    }
     if let tap, tap.failures.load(ordering: .relaxed) > 0 {
       print(
         "Warning: \(tap.failures.load(ordering: .relaxed)) microphone buffers could not be "
@@ -54,12 +79,14 @@ final class Microphone {
     }
   }
 
-  /// Converts each tap buffer to 16 kHz mono, and counts the buffers it could not convert.
+  /// Converts each tap buffer to 16 kHz mono, counts the buffers it could not convert, and notes
+  /// a change of the audio input.
   private final class Tap: @unchecked Sendable {
     // Safe: AVAudioEngine calls the tap block serially on its own thread, and the tap block is
-    // the only code that touches `converter`; `failures` is atomic.
+    // the only code that touches `converter`; `failures` and `inputChanged` are atomic.
     private let converter: FormatConverter
     let failures = Atomic<Int>(0)
+    let inputChanged = Atomic<Bool>(false)
     init(converter: FormatConverter) { self.converter = converter }
     func convert(_ buffer: AVAudioPCMBuffer) -> [Float]? {
       guard let converted = try? converter.convert(buffer) else {
@@ -132,7 +159,7 @@ enum Recorder {
       path: "calls-\(phrase.rawValue)-\(setting.rawValue)-\(SpikePaths.stamp()).wav")
     let writer = try WAVWriter(url: url)
     let microphone = try await Microphone()
-    print("Recording. Wait for the first cue…")
+    print("Recording from \(microphone.deviceName). Wait for the first cue…")
     var cues: [Cue] = []
     var waiting = true
     for await samples in microphone.chunks {
@@ -211,7 +238,7 @@ enum Recorder {
     var writer = try makeWriter()
     var total = 0.0
     let microphone = try await Microphone()
-    print("Recording…")
+    print("Recording from \(microphone.deviceName)…")
     for await samples in microphone.chunks {
       try writer.append(samples)
       let before = total

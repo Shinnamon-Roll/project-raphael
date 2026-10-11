@@ -21,11 +21,27 @@ struct ScoringTests {
   @Test func aDetectionInsideTheWindowIsAHitAndOutsideIsAFalseTrigger() {
     let score = Scoring.score(
       label(cues: [10, 25, 40]),
-      detections: [detection(11.5), detection(31.5), detection(55)], samples: [])
-    #expect(score.calls.map { $0.detection?.time } == [11.5, nil, nil])
-    // 31.5 is 6.5 s after the cue at 25: outside its window.
-    #expect(score.falseTriggers.map(\.time) == [31.5, 55])
+      detections: [detection(11.5), detection(20), detection(27), detection(50, .heyUriel)],
+      samples: [])
+    #expect(score.calls.map { $0.detection?.time } == [11.5, 27, nil])
+    #expect(score.calls.allSatisfy { $0.late == nil })
+    // 20 follows a hit, and the other phrase never counts as late.
+    #expect(score.falseTriggers.map(\.time) == [20, 50])
     #expect(score.quietSeconds == 60 - 18)
+  }
+
+  @Test func aMissedCallReportedBeforeTheNextCueIsLateNotAFalseTrigger() {
+    let score = Scoring.score(
+      label(duration: 40, cues: [10, 25]),
+      detections: [detection(17.5), detection(17.5, .heyUriel), detection(22), detection(33)],
+      samples: [])
+    #expect(score.calls.map { $0.detection?.time } == [nil, nil])
+    // The last cue's late call may come any time after its window.
+    #expect(score.calls.map { $0.late?.time } == [17.5, 33])
+    // The other phrase at the late time is the same call; a second report after it is not.
+    #expect(score.falseTriggers.map(\.time) == [22])
+    // Not quiet: 10–17.5 and 25–33.
+    #expect(score.quietSeconds == 40 - 7.5 - 8)
   }
 
   @Test func theWindowIncludesBothEnds() {
@@ -62,8 +78,8 @@ struct ScoringTests {
   @Test func quietTimeLeavesOutOverlappingAndClippedWindows() {
     let cues = [10, 13, 57].map { Cue(time: $0, text: "") }
     // Windows 10–16 and 13–19 overlap (9 s together); 57–63 is clipped to 57–60 (3 s).
-    #expect(Scoring.quietSeconds(duration: 60, cues: cues, window: 6) == 48)
-    #expect(Scoring.quietSeconds(duration: 60, cues: [], window: 6) == 60)
+    #expect(Scoring.quietSeconds(duration: 60, outside: cues.map { $0.time...($0.time + 6) }) == 48)
+    #expect(Scoring.quietSeconds(duration: 60, outside: []) == 60)
   }
 
   @Test func ratesArePerHourOfQuietAudio() {
@@ -127,7 +143,8 @@ struct ScoringTests {
         calls: cues.enumerated().map { index, cue in
           CallResult(
             cue: Cue(time: cue, text: "Uriel"), onset: cue + 1,
-            detection: index == 0 ? nil : detection(cue + 2))
+            detection: index == 0 ? nil : detection(cue + 2), late: index == 0 ? detection(12) : nil
+          )
         }, falseTriggers: [], quietSeconds: 85), cpuSeconds: 2, serviceCPUSeconds: 10,
       wallSeconds: 4)
     let background = FileRun(
@@ -137,18 +154,30 @@ struct ScoringTests {
       score: FileScore(calls: [], falseTriggers: [detection(100)], quietSeconds: 3_600),
       cpuSeconds: 30, serviceCPUSeconds: 60, wallSeconds: 100)
     let summary = Report(
-      engine: "test", details: "Test engine", date: .now, runs: [calls, background]
+      engine: "test", details: "Test engine", usesSpeechService: true, date: .now,
+      runs: [calls, background]
     )
     .summary
-    #expect(summary.contains("| Uriel | near | 19/20 | 1.00 s | 1.00 s | 0 |"))
-    #expect(summary.contains("| **Uriel** | recorded, all | 19/20, meets the target |"))
+    #expect(summary.contains("| Uriel | near | 19/20 | 1 | 1.00 s | 1.00 s | 0 |"))
+    #expect(summary.contains("| **Uriel** | recorded, all | 19/20, meets the target | 1 |"))
     #expect(summary.contains("| Uriel | background talk | 1 | 1.00 | 1.00 | 8.0 |"))
+    #expect(summary.contains("| Uriel | outside the cues, recorded | 0 | 0.02 | 0.00 | 0.0 |"))
+    // The headline leaves out the mostly silent gaps between cues.
+    #expect(summary.contains("| Uriel | **background, recorded** | 1 | 1.00 | 1.00 | 8.0 |"))
     #expect(summary.contains("| Hey Uriel | background talk | 0 | 1.00 | 0.00 | 0.0 |"))
     #expect(summary.contains("| this process (`getrusage`) | 32.0 s |"))
     #expect(summary.contains("| system speech service (`localspeechrecognition`) | 70.0 s |"))
     #expect(summary.contains("| **both** | 102.0 s |"))
     #expect(summary.contains("cue at 5.0 s (Uriel)"))
+    #expect(summary.contains("(reported late, at 12.0 s)"))
     #expect(summary.contains("Uriel as `ยูเรียน`: “ยูเรียน”"))
+    let inProcess = Report(
+      engine: "test", details: "Test engine", usesSpeechService: false, date: .now,
+      runs: [calls, background]
+    )
+    .summary
+    #expect(!inProcess.contains("localspeechrecognition"))
+    #expect(inProcess.contains("This engine runs inside this process."))
   }
 }
 

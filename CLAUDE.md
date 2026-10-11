@@ -32,6 +32,7 @@ Use these words with exactly these meanings in code, docs and UI copy.
 - **Uriel** – the assistant: the menu-bar app and everything it does.
 - **Owner** – the one person who uses Uriel and decides what it does.
 - **Wake word** – "Uriel", spoken by the owner, which makes Uriel start listening.
+- **Wake phrase** – "Uriel" or "Hey Uriel", the two candidates measured in Phase 0 step 7.
 - **Utterance** – what the owner says after the wake word, up to the end of speech.
 - **Turn** – one utterance and Uriel's answer, including any tool calls in between.
 - **Conversation** – consecutive turns that share history and are sent to Claude together. When a conversation ends is not decided (see Open questions).

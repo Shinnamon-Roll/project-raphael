@@ -7,6 +7,9 @@ struct CallResult: Codable, Sendable, Equatable {
   var onset: Double?
   /// The first detection of the session's phrase inside the window; `nil` is a miss.
   var detection: Detection?
+  /// For a miss, the first detection of the session's phrase after the window and before the next
+  /// cue: the call, reported too late to count as a hit.
+  var late: Detection?
 
   /// Seconds from the speech onset to the detection; `nil` for a miss or with no clear onset.
   var delay: Double? {
@@ -18,44 +21,59 @@ struct CallResult: Codable, Sendable, Equatable {
 /// How one recording scored.
 struct FileScore: Codable, Sendable, Equatable {
   var calls: [CallResult]
-  /// Detections of either phrase outside every cue window; in background audio, all of them.
+  /// Detections of either phrase outside every cue window and late call; in background audio, all
+  /// of them.
   var falseTriggers: [Detection]
-  /// Seconds of audio outside the cue windows, the time the false triggers are counted over.
+  /// Seconds of audio outside the cue windows and late calls, the time the false triggers are
+  /// counted over.
   var quietSeconds: Double
 }
 
 enum Scoring {
-  /// Scores `detections` against `label`: a detection of the session's phrase in [cue, cue +
-  /// window] is that cue's hit (one per cue; later ones in the window are repeats), and any
-  /// detection outside every window is a false trigger.
+  /// Scores `detections` against `label`.
+  ///
+  /// - A detection of the session's phrase in [cue, cue + window] is that cue's hit; later ones in
+  ///   the window are repeats.
+  /// - For a miss, the first detection of the session's phrase after the window and before the
+  ///   next cue is the call reported late: neither a hit nor a false trigger, and the time up to it
+  ///   is not quiet.
+  /// - Any other detection, of either phrase, outside those spans is a false trigger.
   static func score(_ label: SessionLabel, detections: [Detection], samples: [Float]) -> FileScore {
+    let cues = label.cues.sorted { $0.time < $1.time }
     var used = Set<Int>()
-    let calls = label.cues.map { cue in
-      let window = cue.time...(cue.time + label.window)
-      let hit = detections.indices.first {
-        !used.contains($0) && detections[$0].phrase == label.phrase
-          && window.contains(detections[$0].time)
+    func first(from start: Double, to end: Double, after: Bool = false) -> Int? {
+      detections.indices.first {
+        let time = detections[$0].time
+        return !used.contains($0) && detections[$0].phrase == label.phrase
+          && (after ? time > start && time < end : time >= start && time <= end)
       }
-      if let hit { used.insert(hit) }
+    }
+    let calls = cues.enumerated().map { index, cue in
+      let windowEnd = cue.time + label.window
+      let hit = first(from: cue.time, to: windowEnd)
+      let next = index + 1 < cues.count ? cues[index + 1].time : .infinity
+      let late = hit == nil ? first(from: windowEnd, to: next, after: true) : nil
+      for chosen in [hit, late].compactMap({ $0 }) { used.insert(chosen) }
       return CallResult(
         cue: cue, onset: onset(in: samples, cue: cue.time, window: label.window),
-        detection: hit.map { detections[$0] })
+        detection: hit.map { detections[$0] }, late: late.map { detections[$0] })
     }
+    let spans = calls.map { $0.cue.time...max($0.cue.time + label.window, $0.late?.time ?? 0) }
     let falseTriggers = detections.filter { detection in
-      !label.cues.contains { ($0.time...($0.time + label.window)).contains(detection.time) }
+      !spans.contains { $0.contains(detection.time) }
     }
     return FileScore(
       calls: calls, falseTriggers: falseTriggers,
-      quietSeconds: quietSeconds(duration: label.duration, cues: label.cues, window: label.window))
+      quietSeconds: quietSeconds(duration: label.duration, outside: spans))
   }
 
-  /// `duration` minus the union of the cue windows inside it.
-  static func quietSeconds(duration: Double, cues: [Cue], window: Double) -> Double {
+  /// `duration` minus the union of `spans` inside it.
+  static func quietSeconds(duration: Double, outside spans: [ClosedRange<Double>]) -> Double {
     var covered = 0.0
     var reach = 0.0
-    for start in cues.map(\.time).sorted() {
-      let from = max(start, reach, 0)
-      let to = min(start + window, duration)
+    for span in spans.sorted(by: { $0.lowerBound < $1.lowerBound }) {
+      let from = max(span.lowerBound, reach, 0)
+      let to = min(span.upperBound, duration)
       if to > from { covered += to - from }
       reach = max(reach, to)
     }

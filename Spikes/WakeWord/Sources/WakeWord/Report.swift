@@ -42,7 +42,7 @@ func replay(_ engine: some WakeWordEngine, paths: [URL]) async throws -> String 
     }
     feed.finish()
     let cpu = processCPUSeconds()
-    let serviceCPU = speechServiceCPUSeconds()
+    let serviceCPU = engine.usesSpeechService ? speechServiceCPUSeconds() : nil
     let clock = ContinuousClock.now
     var detections: [Detection] = []
     var transcripts: [Transcript] = []
@@ -57,10 +57,14 @@ func replay(_ engine: some WakeWordEngine, paths: [URL]) async throws -> String 
         path: relative, label: label, detections: detections, transcripts: transcripts,
         score: Scoring.score(label, detections: detections, samples: samples),
         cpuSeconds: processCPUSeconds() - cpu,
-        serviceCPUSeconds: cpuDelta(from: serviceCPU, to: speechServiceCPUSeconds()),
+        serviceCPUSeconds: engine.usesSpeechService
+          ? cpuDelta(from: serviceCPU, to: speechServiceCPUSeconds()) : nil,
         wallSeconds: (ContinuousClock.now - clock) / .seconds(1)))
   }
-  let summary = Report(engine: engine.name, details: engine.details, date: .now, runs: runs).summary
+  let summary = Report(
+    engine: engine.name, details: engine.details, usesSpeechService: engine.usesSpeechService,
+    date: .now, runs: runs
+  ).summary
   let folder = SpikePaths.results.appending(
     path: "\(SpikePaths.stamp())-replay-\(engine.name)", directoryHint: .isDirectory)
   try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -73,6 +77,8 @@ func replay(_ engine: some WakeWordEngine, paths: [URL]) async throws -> String 
 struct Report {
   var engine: String
   var details: String
+  /// Whether the engine's work runs in the system speech service, so its CPU counts too.
+  var usesSpeechService: Bool
   var date: Date
   var runs: [FileRun]
 
@@ -100,6 +106,9 @@ struct Report {
       "- A hit is a detection of the session's phrase within \(format(SessionLabel.defaultWindow, 0)) s "
         + "after its cue; one per cue. A detection of either phrase outside every cue window is a "
         + "false trigger; in background audio every detection is one.",
+      "- Late is a missed call whose phrase the engine reported after the window but before the "
+        + "next cue: neither a hit nor a false trigger, and the time up to it is not counted as "
+        + "quiet.",
       "- \"Uriel\" matches the name with or without \"hey\"; \"Hey Uriel\" needs a spelling of hey "
         + "right before the name.",
       "- Detection time is the end of the audio range of the first (volatile) result that holds "
@@ -118,8 +127,8 @@ struct Report {
     guard !calls.isEmpty else { return ["## Calls", "", "No call sessions.", ""] }
     var lines = [
       "## Calls", "",
-      "| Phrase | Setting | Hits | Delay p50 | Delay p95 | No onset |",
-      "|---|---|---|---|---|---|",
+      "| Phrase | Setting | Hits | Late | Delay p50 | Delay p95 | No onset |",
+      "|---|---|---|---|---|---|---|",
     ]
     for phrase in Phrase.allCases {
       let sessions = calls.filter { $0.label.phrase == phrase }
@@ -149,7 +158,8 @@ struct Report {
     let hits = results.filter { $0.detection != nil }.count
     let delays = results.compactMap(\.delay)
     let noOnset = results.filter { $0.detection != nil && $0.onset == nil }.count
-    return "| \(phrase) | \(setting) | \(hits)/\(results.count)\(note) | "
+    let late = results.filter { $0.late != nil }.count
+    return "| \(phrase) | \(setting) | \(hits)/\(results.count)\(note) | \(late) | "
       + "\(seconds(percentile(50, of: delays))) | \(seconds(percentile(95, of: delays))) | \(noOnset) |"
   }
 
@@ -179,8 +189,9 @@ struct Report {
       if !syntheticCalls.isEmpty {
         rows.append(("outside the cues, synthetic", rate(syntheticCalls)))
       }
-      let recorded = rate(recordedCalls + background.filter { !$0.label.isSynthetic })
-      if recorded.seconds > 0 { rows.append(("**recorded, all**", recorded)) }
+      // The headline is background only: the gaps between cues are mostly silent.
+      let recorded = rate(background.filter { !$0.label.isSynthetic })
+      if recorded.seconds > 0 { rows.append(("**background, recorded**", recorded)) }
       for (audio, rate) in rows {
         lines.append(
           "| \(phrase.spoken) | \(audio) | \(rate.count) | \(format(rate.hours, 2)) | "
@@ -206,7 +217,8 @@ struct Report {
       "| Process | CPU | Per hour of audio |", "|---|---|---|",
       "| this process (`getrusage`) | \(format(cpu, 1)) s | \(format(cpu / hours, 0)) s |",
     ]
-    if service.count == runs.count {
+    let serviceRead = usesSpeechService && service.count == runs.count
+    if serviceRead {
       let total = service.reduce(0, +)
       lines.append(
         "| system speech service (`localspeechrecognition`) | \(format(total, 1)) s | "
@@ -218,10 +230,12 @@ struct Report {
       "",
       "\(format(hours, 2)) h of audio; replay ran \(format(hours * 3_600 / wall, 0))× faster than "
         + "real time. "
-        + (service.count == runs.count
-          ? "The speech service is shared, so anything else using speech recognition during the "
-            + "replay counts too."
-          : "The system speech service could not be read, so only this process is counted."),
+        + (!usesSpeechService
+          ? "This engine runs inside this process."
+          : serviceRead
+            ? "The speech service is shared, so anything else using speech recognition during "
+              + "the replay counts too."
+            : "The system speech service could not be read, so only this process is counted."),
       "Power is not measured here; watch `live` with Activity Monitor's Energy tab or "
         + "`sudo powermetrics --samplers tasks`.", "",
     ]
@@ -245,9 +259,10 @@ struct Report {
       for call in run.score.calls where call.detection == nil {
         let heard = Self.heard(
           in: run.transcripts, from: call.cue.time, to: call.cue.time + run.label.window)
+        let late = call.late.map { " (reported late, at \(format($0.time, 1)) s)" } ?? ""
         missed.append(
-          "- `\(run.path)` cue at \(format(call.cue.time, 1)) s (\(call.cue.text)): heard “\(heard)”"
-        )
+          "- `\(run.path)` cue at \(format(call.cue.time, 1)) s (\(call.cue.text)): heard "
+            + "“\(heard)”\(late)")
       }
       for detection in run.score.falseTriggers {
         let heard = Self.heard(in: run.transcripts, from: detection.time - 3, to: detection.time)

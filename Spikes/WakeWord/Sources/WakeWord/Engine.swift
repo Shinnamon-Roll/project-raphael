@@ -8,6 +8,9 @@ protocol WakeWordEngine: Sendable {
   var name: String { get }
   /// One line for the summary: the engine and its settings.
   var details: String { get }
+  /// Whether the engine's work runs in the system speech service (`localspeechrecognition`)
+  /// rather than in this process, so replay and live mode count that service's CPU too.
+  var usesSpeechService: Bool { get }
   /// Loads or installs what the engine needs once, before the first stream.
   func prepare() async throws
   /// Listens to `audio`, contiguous chunks of 16 kHz mono samples starting at audio time 0, and

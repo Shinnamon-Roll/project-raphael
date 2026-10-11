@@ -72,7 +72,10 @@ enum WakePhraseMatcher {
     var found: [Range<Int>] = []
     for spelling in thaiSpellings {
       found += occurrences(of: Array(spelling.unicodeScalars), in: text)
-        .filter { !startsNextSyllable(at: $0.upperBound, in: text) }
+        .filter {
+          !startsNextSyllable(at: $0.upperBound, in: text)
+            && !endsSilentO(before: $0.lowerBound, in: text)
+        }
     }
     found += latinWords(in: text).filter { editDistance(text[$0], latinWord.unicodeScalars) <= 1 }
     var kept: [Range<Int>] = []
@@ -92,6 +95,15 @@ enum WakePhraseMatcher {
     guard text.indices.contains(index) else { return false }
     let next = text[index].value
     return (0x0E30...0x0E3A).contains(next) || next == 0x0E45 || next == 0x0E47
+  }
+
+  /// Whether the name starts inside "อยู่": a silent อ right before ย, as in "ยังอยู่เรียนปี 3",
+  /// which reads "อยูเรียน" once tone marks are gone. An อ after a leading vowel is a syllable of
+  /// its own, such as the hey "เอ" in "เอยูเรียน", and does not count.
+  static func endsSilentO(before index: Int, in text: [Unicode.Scalar]) -> Bool {
+    guard index > 0, text[index - 1] == "อ" else { return false }
+    guard index > 1 else { return true }
+    return !(0x0E40...0x0E44).contains(text[index - 2].value)  // เ แ โ ใ ไ
   }
 
   /// The start of a "hey" right before `index`, with or without a space between.

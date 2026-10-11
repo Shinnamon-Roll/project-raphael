@@ -31,6 +31,10 @@ struct MatcherTests {
     "คุณยูริเพิ่งย้ายมาทำงาน",
     "ยูรีเล่าเรื่องตลกให้ฟังหน่อย",
     "น้องชายกำลังเรียนพิเศษภาษาอังกฤษอยู่",
+    // "อยู่เรียน" reads "อยูเรียน" once tone marks are gone.
+    "ยังอยู่เรียนปี 3",
+    "ไปอยู่เรียนต่างประเทศ",
+    "อยู่เรียนจนเย็น",
     "the urea price",
     "",
   ])
@@ -42,6 +46,9 @@ struct MatcherTests {
   @Test func heyUrielNeedsAHeyRightBeforeTheName() {
     #expect(heard(.heyUriel, "เพื่อนเฮย์ยูเรียนตั้งเวลา 10 นาทีนะ") == ["เฮยยูเรียน"])
     #expect(heard(.heyUriel, "เคยูเรียนตั้งเวลา 5 นาทีหน่อย") == ["เคยูเรียน"])
+    // The hey "เอ" ends in อ too, but after a leading vowel it is not the silent อ of "อยู่".
+    #expect(heard(.heyUriel, "เอ้ ยูเรียน เปิดเพลง") == ["เอ ยูเรียน"])
+    #expect(heard(.heyUriel, "เอยูเรียนเปิดเพลง") == ["เอยูเรียน"])
     #expect(heard(.heyUriel, "เฮ้ ยูเรียล ตั้งเวลา") == ["เฮ ยูเรียล"])
     #expect(heard(.heyUriel, "Hey Uriel, what's up") == ["hey uriel"])
     #expect(heard(.heyUriel, "ยูเรียนเปิด Safari").isEmpty)

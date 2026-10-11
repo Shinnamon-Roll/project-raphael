@@ -11,6 +11,8 @@ struct AppleEngine: WakeWordEngine {
 
   var name: String { "apple-context-\(usesContext ? "on" : "off")" }
 
+  var usesSpeechService: Bool { true }
+
   var details: String {
     "SpeechAnalyzer + DictationTranscriber (th-TH, progressiveLongDictation: volatile results), "
       + "contextual strings \(usesContext ? "on: \(WakePhraseMatcher.contextualStrings)" : "off")"
