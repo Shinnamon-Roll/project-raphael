@@ -96,3 +96,10 @@ and the main session appends it.
 - 02:32 [main] #27 received: A native menu for Uriel: status, About and Quit
 - 02:32 [main] #27 started: A native menu for Uriel: status, About and Quit
 - 02:33 [main] #27 done: A native menu for Uriel: status, About and Quit → A native macOS menu in Thai: a status line (Uriel can't listen yet), เกี่ยวกับ Uriel (the standard About panel) and ออกจาก Uriel ⌘Q; UI copy is Thai — Uriel/UrielApp.swift, CLAUDE.md, .claude/agents/ui.md, docs/plan.md
+- 02:34 [main] #28 received: Wake-word spike: recorder, replay and the Apple engine
+- 02:34 [main] #29 received: Wake-word spike: the sherpa-onnx engine
+- 02:34 [main] #17 started: Phase 0.7: wake-word spike
+- 02:34 [core] #28 started: Wake-word spike: recorder, replay and the Apple engine
+- 02:55 [main] #30 received: Make Uriel speak politely with ค่ะ and คะ
+- 02:55 [main] #30 started: Make Uriel speak politely with ค่ะ and คะ
+- 02:56 [main] #30 done: Make Uriel speak politely with ค่ะ and คะ → Uriel now ends statements with ค่ะ and questions with คะ, keeps ชั้น, and keeps chat to one or two short sentences, from the owner's Thai blind rating — docs/persona.md, Spikes/Latency/Sources/Latency/Fixtures.swift
