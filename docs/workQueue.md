@@ -12,7 +12,6 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Received (งานที่ได้รับ)
 
-- #13 · 2026-10-11 · owner · Phase 0.3: Claude client with SSE parser
 - #14 · 2026-10-11 · owner · Phase 0.4: Keychain store for the API key
 - #15 · 2026-10-11 · owner · Phase 0.5: sentence splitter
 - #16 · 2026-10-11 · owner · Phase 0.6: latency spike
@@ -22,6 +21,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #13 · 2026-10-11 · core · Phase 0.3: Claude client with SSE parser
 - #12 · 2026-10-11 · ui · Phase 0.2: app shell (XcodeGen, MenuBarExtra, signing)
 - #11 · 2026-10-11 · core · Phase 0.1: UrielCore package scaffold
 - #10 · 2026-10-11 · main · Record the signing identity on this Mac
