@@ -16,5 +16,6 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #3 · 2026-10-11 · main · pr-lens and eli5 skills for diagrams
 - #2 · 2026-10-11 · main · graft wired into Claude Code
 - #1 · 2026-10-11 · main · Short memory: work queue, worklog, SessionStart hook

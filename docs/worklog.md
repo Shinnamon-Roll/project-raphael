@@ -21,3 +21,6 @@ and the main session appends it.
 - 15:05 [main] #2 received: graft wired into Claude Code
 - 15:05 [main] #2 started: graft wired into Claude Code
 - 15:06 [main] #2 done: graft wired into Claude Code → graft 0.21.1 (already latest, no upgrade) wired for Claude Code only: hooks, statusline, MCP, skill; no global writes — .claude/settings.json .claude/helpers/graft-*.cjs .claude/skills/graft .mcp.json .gitignore .ignore
+- 15:06 [main] #3 received: pr-lens and eli5 skills for diagrams
+- 15:06 [main] #3 started: pr-lens and eli5 skills for diagrams
+- 15:06 [main] #3 done: pr-lens and eli5 skills for diagrams → pr-lens and eli5 skills reviewed (markdown only) and copied for Claude Code, pinned in skills-lock.json — .claude/skills/pr-lens .claude/skills/eli5 skills-lock.json
