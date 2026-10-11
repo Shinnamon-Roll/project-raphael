@@ -20,6 +20,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #20 · 2026-10-12 · main · Record the API key types and workspace scoping
 - #19 · 2026-10-12 · main · Menu-bar icon: the Halo mark
 - #15 · 2026-10-11 · core · Phase 0.5: sentence splitter
 - #14 · 2026-10-11 · core · Phase 0.4: Keychain store for the API key

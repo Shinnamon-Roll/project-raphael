@@ -72,3 +72,6 @@ and the main session appends it.
 - 00:20 [main] #19 received: Menu-bar icon: the Halo mark
 - 00:20 [main] #19 started: Menu-bar icon: the Halo mark
 - 00:22 [main] #19 done: Menu-bar icon: the Halo mark → Replaced the waveform.circle SF Symbol with the owner's Halo mark, a template SVG in a new asset catalog — Uriel/Assets.xcassets, Uriel/UrielApp.swift, CLAUDE.md, docs/plan.md
+- 00:36 [main] #20 received: Record the API key types and workspace scoping
+- 00:36 [main] #20 started: Record the API key types and workspace scoping
+- 00:37 [main] #20 done: Record the API key types and workspace scoping → Recorded that Console keys are identity-backed (sk-ant-usr personal keys), that an unscoped key needs anthropic-workspace-id, and that the owner's key is scoped to one workspace — CLAUDE.md

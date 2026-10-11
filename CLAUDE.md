@@ -154,6 +154,11 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - Claim them by linking one Console organization at claude.ai › Settings › Billing. The link cannot be changed without support.
   - Credits expire each billing cycle and do not cover Claude Code.
   - When they run out, API requests stop; nothing is charged to the plan.
+- **API keys** (<https://platform.claude.com/docs/en/manage-claude/authentication>, checked 2026-10-12):
+  - Console › Settings › API keys creates identity-backed keys: a personal key acts as the owner, a service account key as a service account. The owner's personal keys start with `sk-ant-usr` (observed; the docs show no prefix list).
+  - A key is scoped to one workspace or to several. A key not scoped to one workspace needs the `anthropic-workspace-id` header on every request, or the API returns 400. Uriel's client sends no workspace header, so the owner's key is scoped to one workspace.
+  - The docs lead with `Authorization: Bearer <key>`; the `x-api-key` header that Uriel sends is "legacy" and still supported.
+  - An expired key returns 401 `authentication_error`.
 - **The API key is a secret.** Never commit it, log it, or log request headers.
 
 ## Agents and how work flows
@@ -242,7 +247,7 @@ open build/Build/Products/Debug/Uriel.app               # run it; it appears in 
 pkill -x Uriel                                          # quit it from the CLI
 ```
 
-The Claude API key is a generic password in the owner's login keychain: service `com.shinnamon.uriel`, account `anthropic-api-key` (`KeychainAPIKeyStore` in `UrielCore`). Tests use their own service name and never touch this item. The owner stores the key by hand:
+The Claude API key is a generic password in the owner's login keychain: service `com.shinnamon.uriel`, account `anthropic-api-key` (`KeychainAPIKeyStore` in `UrielCore`). Tests use their own service name and never touch this item. The owner creates a personal key scoped to one workspace (Console › Settings › API keys), then stores it by hand in Terminal.app:
 
 ```bash
 security add-generic-password -U -s com.shinnamon.uriel -a anthropic-api-key -w   # store or replace it; -w last makes security prompt for the key, so it never reaches shell history
