@@ -1,6 +1,6 @@
 ---
 name: core
-description: Swift core of Uriel, the owner's voice assistant on macOS — audio capture, the wake word, speech-to-text (SpeechAnalyzer), text-to-speech (AVSpeechSynthesizer, female English voice), the Claude API client with streaming and the tool loop, the Mac tools (open_app, timers), notifications and the Keychain. Use for anything that is not a SwiftUI screen or app packaging. Read CLAUDE.md and docs/plan.md first.
+description: Swift core of Uriel, the owner's voice assistant on macOS — audio capture, the wake word, speech-to-text (SpeechAnalyzer), text-to-speech (AVSpeechSynthesizer, female Thai voice), the Claude API client with streaming and the tool loop, the Mac tools (open_app, timers), notifications and the Keychain. Use for anything that is not a SwiftUI screen or app packaging. Read CLAUDE.md and docs/plan.md first.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: opus
 ---

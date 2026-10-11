@@ -81,3 +81,8 @@ and the main session appends it.
 - 01:21 [main] #22 received: Keep the owner's Halo state designs for step 1.8
 - 01:22 [main] #22 started: Keep the owner's Halo state designs for step 1.8
 - 01:22 [main] #22 done: Keep the owner's Halo state designs for step 1.8 → Saved the five Halo state icons the owner liked (idle, listening, thinking, speaking, offline) for step 1.8 — docs/design/halo-states.svg, docs/plan.md, CLAUDE.md
+- 01:32 [main] #23 received: Switch v1 to Thai
+- 01:32 [main] #24 received: Split Thai text into spoken sentences
+- 01:32 [main] #25 received: Run the latency spike in Thai
+- 01:32 [main] #23 started: Switch v1 to Thai
+- 01:34 [main] #23 done: Switch v1 to Thai → Switched v1's spoken language to Thai and recorded the Thai checks (DictationTranscriber, NLTokenizer, Kanya, 2.4x tokens) — CLAUDE.md, docs/plan.md, docs/adr/0003-on-device-voice.md, .claude/agents/core.md, .claude/agents/research.md

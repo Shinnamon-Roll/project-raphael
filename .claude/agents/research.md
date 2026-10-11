@@ -14,7 +14,7 @@ Rules:
 - Cite sources as URL plus access date. Prefer primary sources: developer.apple.com, support.apple.com, platform.claude.com, and the library's own docs and repo. Say plainly when something is unverified, a benchmark comes from a vendor or a third party, or a licence is restrictive.
 - **Priority areas:**
   - wake-word engines that run in a Swift app (sherpa-onnx keyword spotting, `SpeechAnalyzer` with a keyword match);
-  - `SpeechAnalyzer` and `AVSpeechSynthesizer` behaviour, including female English voices;
+  - `SpeechAnalyzer` and `AVSpeechSynthesizer` behaviour in Thai, including female Thai voices;
   - TCC, entitlements and signing for a menu-bar app;
   - an Xcode project versus a Swift package for builds from the command line;
   - Claude API latency, streaming, tool use, caching and cost;

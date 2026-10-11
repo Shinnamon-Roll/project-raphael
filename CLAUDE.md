@@ -8,13 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 What Uriel does:
 
-- The owner says "Uriel". Uriel listens, answers out loud in English with a female voice, and helps on the Mac: opening apps, setting timers and similar.
+- The owner says "Uriel". Uriel listens, answers out loud in Thai with a female voice, and helps on the Mac: opening apps, setting timers and similar.
 - The owner can also just chat with it, the way they chat with Claude. The brain is the Claude API, so Uriel talks like Claude.
 - It runs locally on the Mac as a menu-bar app. Only the Claude API is in the cloud.
 
 **Current goal (owner, 2026-10-11): v1 —**
 1. the wake word "Uriel" starts listening;
-2. Uriel answers by voice: English, a female voice;
+2. Uriel listens and answers by voice in Thai, with a female voice (the owner switched v1 from English to Thai on 2026-10-12);
 3. casual, multi-turn chat through the Claude API;
 4. "open <app>";
 5. timers Uriel keeps itself, with a notification and a spoken alert.
@@ -23,7 +23,7 @@ Nothing else. The v1 plan is `docs/plan.md` (drafted by `research`, approved by 
 
 **Later** (gathered, not planned; nothing here starts without a new plan): calendar and reminders (EventKit), contacts, mail and messages, music, volume, brightness and Focus, running the owner's Shortcuts, "what's on my screen" and computer use, Apple Foundation Models as an on-device router or offline fallback, escalating hard questions to a stronger model, memory across conversations, a more natural voice (Kokoro), launch at login.
 
-The owner holds the requirements and the Definition of Done, and is the only person who decides. Agents report to the main session, and the main session reports to the owner. When a requirement is unknown, say so and add it to "Open questions" instead of inventing one. A question from the owner ("ทำได้ไหม?") is a question: answer it and wait for an explicit order before building. Ask clarifying questions in Thai. Code, docs, UI copy and commit messages are in English. Uriel itself speaks and listens in English only.
+The owner holds the requirements and the Definition of Done, and is the only person who decides. Agents report to the main session, and the main session reports to the owner. When a requirement is unknown, say so and add it to "Open questions" instead of inventing one. A question from the owner ("ทำได้ไหม?") is a question: answer it and wait for an explicit order before building. Ask clarifying questions in Thai. Code, docs, UI copy and commit messages are in English. Uriel itself speaks and listens in Thai (owner, 2026-10-12).
 
 ## Glossary
 
@@ -37,7 +37,7 @@ Use these words with exactly these meanings in code, docs and UI copy.
 - **Conversation** – consecutive turns that share history and are sent to Claude together. When a conversation ends is not decided (see Open questions).
 - **Tool** – one typed Mac action Claude may ask for, such as `open_app` or `set_timer`. Uriel's own code validates it and runs it.
 - **Timer** – a countdown Uriel keeps itself. When it ends, Uriel posts a notification and says so.
-- **Voice** – the text-to-speech voice Uriel answers in: female, English.
+- **Voice** – the text-to-speech voice Uriel answers in: female, Thai.
 
 ## Architecture decisions (agreed)
 
@@ -51,8 +51,8 @@ There is no "best" architecture, only trade-offs. Record each decision with its 
   - Cost: we keep the request and event types and the tool loop up to date by hand.
 - **Voice:** on device (ADR 0003).
   - Wake word: a keyword spotter in the app; the engine is picked by a measured spike.
-  - Speech-to-text: Apple `SpeechAnalyzer` with `SpeechDetector`.
-  - Text-to-speech: `AVSpeechSynthesizer` with a female English voice.
+  - Speech-to-text: Apple `SpeechAnalyzer` with `DictationTranscriber` for Thai (`SpeechTranscriber` has no Thai) and `SpeechDetector`.
+  - Text-to-speech: `AVSpeechSynthesizer` with a female Thai voice.
   - Only text goes to Claude; audio stays on the Mac.
   - Gain: free, offline, low power.
   - Cost: an always-on mic, wake-word accuracy still to be measured, and Apple voices less natural than neural TTS.
@@ -97,12 +97,15 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - Live mic input on macOS 26 means an `AVAudioEngine` tap with `AVAudioConverter` to `bestAvailableAudioFormat`. `CaptureInputSequenceProvider` and `AnalyzerInputConverter` need macOS 27.
   - `SpeechDetector` only gates transcription and gives no end-of-speech signal. End of utterance is our own silence timer, then `finalize(through:)`.
   - Whether they also need the Speech Recognition permission is unverified.
+  - **Thai** (checked on this Mac, 2026-10-12): `SpeechTranscriber.supportedLocales` has no Thai (30 locales); `DictationTranscriber.supportedLocales` has it (54 locales). `SFSpeechRecognizer` for `th-TH` exists and supports on-device recognition. How accurate `DictationTranscriber` is in Thai, and with English app names inside Thai speech, is unverified.
+- **`NLTokenizer` does not split Thai into sentences**, not even with `setLanguage(.thai)`: a Thai paragraph comes back as one sentence, because Thai ends a sentence with a space, not a full stop (checked 2026-10-12).
 - **Wake-word engine candidate:** sherpa-onnx v1.13.8 has a prebuilt `osx-arm64` static library, but no SwiftPM package or macOS xcframework. Its English KWS model (zipformer, 3.3M) is about 5 MB in int8. Keywords are BPE tokens with `:boost` and `#threshold`. The licence of the weights is unverified.
 - **Signing:** this Mac has one valid `Apple Development` identity from the owner's Personal Team (team `TFNAQASAZ4`). It needs Apple's WWDR G3 intermediate (`AppleWWDRCAG3.cer` from apple.com) in the login keychain; without it `security find-identity -v -p codesigning` finds 0 valid identities. Ad-hoc signing ties the designated requirement to one build (TN3127), so permission and Keychain prompts return after rebuilds. Under the hardened runtime the mic needs `com.apple.security.device.audio-input`. The App Sandbox is required only for the Mac App Store.
 - **Voices:**
   - `AVSpeechSynthesizer` voices have a `gender`.
   - Premium and Enhanced voices are downloaded by the owner in System Settings › Accessibility › Read & Speak. No API lists voices that are not installed.
   - Installed female English voices: Samantha, Karen, Moira, Tessa and others; none is Premium or Enhanced (`say -v '?'`).
+  - Installed Thai voices: one, Kanya (`th_TH`, female, default quality). Which Premium or Enhanced Thai voices exist is unverified.
   - The synthesizer queues each `AVSpeechUtterance` in order, so speak one per sentence.
   - Personal Voice needs the owner's authorization.
 - **Opening apps:** `NSWorkspace.openApplication(at:configuration:)` needs no permission. Activation has been cooperative since macOS 14, so bringing an app to the front is not guaranteed.
@@ -128,6 +131,7 @@ These are constraints, not choices. Re-check one before a design depends on it.
   - On Sonnet 5.5 with adaptive thinking, text between tool calls comes back as progress-update `thinking` blocks whose text is empty by default, so a voice goes quiet between tool calls. `between_tools` returns that text.
   - Thinking blocks are tied to the model that wrote them. After a model switch mid-conversation, the API drops the blocks the new model cannot read.
   - A response can start with an empty thinking block, so read blocks by type.
+- **Thai costs more tokens:** the same content takes about 2.4× the tokens in Thai (`count_tokens`, 2026-10-12: 451 against 185 over four sentence pairs, the same on Sonnet 5.5 and Haiku 5.5). The system prompt can stay English; the spoken replies grow. The owner checks whether the credits suffice in daily use.
 - **Sampling:** Sonnet 5.5 returns 400 for a non-default `temperature`, `top_p` or `top_k`, and Haiku 5.5 for a non-default `temperature`. Send none of them.
 - **History (preserved thinking):**
   - On Fable 5.1, Opus 5.5, Sonnet 5.5 and Haiku 5.5, editing, reordering or deleting earlier messages, the system prompt or the tools returns 400.
@@ -275,7 +279,7 @@ graft map                         # orient in the repo
 graft build                       # rebuild the graph after big changes
 .claude/helpers/queue.py show     # what is received, in progress and done
 .claude/helpers/queue.py selftest # check the queue script
-say -v '?'                        # list installed voices (look for female English Premium ones)
+say -v '?'                        # list installed voices (look for female Thai ones, th_TH)
 ```
 
 ## Open questions
@@ -294,6 +298,7 @@ Track unanswered questions here and settle them with the owner.
 - **Swift style and lint:** the Swift API Design Guidelines with `swift format` from the toolchain, or SwiftLint as well?
 - **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation; it is out of v1.
 - **A timer that ends while Uriel is not running:** speak about it at the next launch, or leave it to the notification?
-- **The voice:** which female English voice? An Apple Premium voice, or Kokoro later? The owner picks by ear.
+- **The voice:** which female Thai voice? Kanya, a Premium or Enhanced download if one exists, or a neural voice later? The owner picks by ear, after the language works.
+- **Menu and settings text:** stay English, or Thai like the conversation?
 - **macOS 27:** will the owner upgrade? It changes Foundation Models and maybe the Speech APIs.
 - **Git branch model:** stay on `main`, or use feature branches?

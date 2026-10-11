@@ -13,6 +13,8 @@ queue and worklog). The full history, with what changed in which files, is
 ## Received (งานที่ได้รับ)
 
 - #17 · 2026-10-11 · owner · Phase 0.7: wake-word spike
+- #24 · 2026-10-12 · owner · Split Thai text into spoken sentences
+- #25 · 2026-10-12 · owner · Run the latency spike in Thai
 
 ## In progress (กำลังทำ)
 
@@ -20,6 +22,7 @@ queue and worklog). The full history, with what changed in which files, is
 
 ## Done (เสร็จแล้ว)
 
+- #23 · 2026-10-12 · main · Switch v1 to Thai
 - #22 · 2026-10-12 · main · Keep the owner's Halo state designs for step 1.8
 - #21 · 2026-10-12 · main · Record the owner's answers on privacy, offline and timers
 - #20 · 2026-10-12 · main · Record the API key types and workspace scoping

@@ -5,7 +5,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
 ## Goal (v1, nothing else)
 
 1. The wake word "Uriel" starts listening.
-2. Uriel answers by voice, in English, with a female voice.
+2. Uriel listens and answers by voice in Thai, with a female voice (switched from English by the owner on 2026-10-12).
 3. Casual, multi-turn chat through the Claude API.
 4. "Open <app>".
 5. Timers Uriel keeps itself, with a notification and a spoken alert.
@@ -45,6 +45,7 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
 5. **`core`: sentence splitter.**
    - Contents: `NLTokenizer` sentences and a markdown strip.
    - Tests: abbreviations, decimals, times, and the flush at the end of the stream.
+   - 2026-10-12, Thai: `NLTokenizer` does not split Thai, so Thai text is also split at the spaces that end Thai sentences, with a minimum length so speech does not come out choppy. Tests: Thai paragraphs, sentence-final particles, numbers with units, English names inside Thai.
 6. **`core`: latency spike.**
    - Files: `Spikes/Latency`, results in `docs/spikes/latency.md`.
    - Configurations: Haiku 5.5 `low`; Haiku `low` with thinking disabled; Sonnet 5.5 `low`; Sonnet `low` with `between_tools`; Sonnet `medium`.
@@ -57,15 +58,17 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - The owner rates the chat answers blind for "sounds like Claude". Budget: under $3.
    - Target: at most 1.5 s at p50 to the first spoken word.
    - Settles: **the chat model and its effort**.
+   - 2026-10-12, Thai: the English run is done (no configuration met the target). After the switch to Thai, a short Thai run: the same five configurations and the 12 utterances in Thai, once cold and 3 times warm, under $1.50. The owner rates the Thai chat answers blind; the English blind sheet is dropped.
 7. **`core`: wake-word spike.**
    - Files: `Spikes/WakeWord`, a command-line tool with replay and live modes, run from Terminal.
    - Engines:
      - sherpa-onnx keyword spotting with both English models and `URIEL` tokens from `text2token`, sweeping `#0.15–0.35` and `:boost`;
-     - continuous `SpeechAnalyzer` with a fuzzy match, with and without `contextualStrings`.
+     - continuous `SpeechAnalyzer` with `DictationTranscriber` in Thai and a fuzzy match on the Thai and Latin spellings, with and without `contextualStrings`.
+   - The owner says "Uriel" inside Thai speech, so the calls and the 2 h of background are Thai.
    - Phrases: "Uriel" and "Hey Uriel" are both measured. The owner picks with the data.
    - Recordings stay local and are never committed:
      - 60 calls: 20 at about 0.5 m, 20 at about 3 m, 20 over media;
-     - 2 h with no wake word: 1 h of podcasts or TV, and 1 h of the owner talking, including the near-words "Muriel", "you real", "your eel" and "oriel".
+     - 2 h with no wake word: 1 h of podcasts or TV, and 1 h of the owner talking, including Thai near-words collected with the owner (candidates: "ยูเรีย", urea, and "ยูริ").
    - Measures: misses out of 60, false triggers per hour, detection delay, and the CPU and power of the tool and of the system speech process.
    - Settles: **the wake-word engine**, recorded as ADR 0009.
    - Target: at most 1 false trigger per 8 h, and at least 57 of 60 calls detected.
@@ -82,11 +85,12 @@ Drafted by `research` and approved by the owner on 2026-10-11. The owner answere
    - Manual: 10 calls.
 3. **`core`: transcriber.**
    - Contents: asset install, `prepareToAnalyze`, and end of utterance on an injected clock (about 0.8 s with no new text, capped at 20 s).
+   - Module: `DictationTranscriber` with the `th-TH` locale, since `SpeechTranscriber` has no Thai.
    - Test: a fake result stream.
    - Manual: does it need the Speech Recognition permission? The answer settles the `Info.plist` key.
 4. **`core`: voice.**
    - Contents:
-     - rank the female English voices: premium, then enhanced, then default;
+     - rank the female Thai voices: premium, then enhanced, then default (Kanya is installed);
      - save the voice's identifier;
      - speak one `AVSpeechUtterance` per sentence;
      - gate the wake word while speaking, plus about 300 ms.
@@ -144,6 +148,7 @@ Owner answers (2026-10-12):
 | No internet | an in-character spoken line: Uriel cannot reach heaven | 1.5 |
 | Timers across a Uriel restart | kept: saved and restored | 1.7 |
 | Menu-bar states | the halo turns into a different sign per state; the owner liked the design in `docs/design/halo-states.svg` | 1.8 |
+| Language of v1 | Thai: Uriel listens and speaks Thai. Token use (about 2.4× English) is checked in daily use. The voice is picked later. | 0.5–0.7, 1.3–1.5 |
 
 Conversation defaults (the owner chose the proposed column):
 
