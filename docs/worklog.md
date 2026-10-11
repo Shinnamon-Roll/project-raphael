@@ -24,3 +24,7 @@ and the main session appends it.
 - 15:06 [main] #3 received: pr-lens and eli5 skills for diagrams
 - 15:06 [main] #3 started: pr-lens and eli5 skills for diagrams
 - 15:06 [main] #3 done: pr-lens and eli5 skills for diagrams → pr-lens and eli5 skills reviewed (markdown only) and copied for Claude Code, pinned in skills-lock.json — .claude/skills/pr-lens .claude/skills/eli5 skills-lock.json
+- 15:32 [main] #4 received: CLAUDE.md project guide and ADRs 0001-0005
+- 15:32 [main] #5 received: Agents: core, ui, research, answer, audit
+- 15:32 [main] #4 started: CLAUDE.md project guide and ADRs 0001-0005
+- 15:35 [main] #4 done: CLAUDE.md project guide and ADRs 0001-0005 → CLAUDE.md with purpose, v1 goal, Later list, glossary, decisions, macOS and Claude API facts, agents, git, queue, layout, commands, open questions; ADRs 0001-0005 — CLAUDE.md docs/adr/
