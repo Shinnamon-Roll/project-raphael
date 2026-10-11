@@ -4,38 +4,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-**Raphael** (`project-raphael`, on GitHub at `https://github.com/Shinnamon-Roll/project-raphael.git`) is the owner's **personal voice assistant** for their own MacBook Air M4:
+**Uriel**, named after the archangel of knowledge, is the owner's **personal voice assistant** for their own MacBook Air M4. The repo is `project-raphael`, on GitHub at `https://github.com/Shinnamon-Roll/project-raphael.git`. The owner will rename it to `code-uriel`; update this URL then.
 
-- The owner says "Raphael". Raphael listens, answers out loud in English with a female voice, and helps on the Mac: opening apps, setting timers and similar.
-- The owner can also just chat with it, the way they chat with Claude. The brain is the Claude API, so Raphael talks like Claude.
+What Uriel does:
+
+- The owner says "Uriel". Uriel listens, answers out loud in English with a female voice, and helps on the Mac: opening apps, setting timers and similar.
+- The owner can also just chat with it, the way they chat with Claude. The brain is the Claude API, so Uriel talks like Claude.
 - It runs locally on the Mac as a menu-bar app. Only the Claude API is in the cloud.
 
 **Current goal (owner, 2026-10-11): v1 —**
-1. the wake word "Raphael" starts listening;
-2. Raphael answers by voice: English, a female voice;
+1. the wake word "Uriel" starts listening;
+2. Uriel answers by voice: English, a female voice;
 3. casual, multi-turn chat through the Claude API;
 4. "open <app>";
-5. timers Raphael keeps itself, with a notification and a spoken alert.
+5. timers Uriel keeps itself, with a notification and a spoken alert.
 
 Nothing else. Code is not started: the next step is a v1 plan (`research` drafts it, the owner approves it, it is saved as `docs/plan.md`). Stop after each phase and wait for the owner.
 
 **Later** (gathered, not planned; nothing here starts without a new plan): calendar and reminders (EventKit), contacts, mail and messages, music, volume, brightness and Focus, running the owner's Shortcuts, "what's on my screen" and computer use, Apple Foundation Models as an on-device router or offline fallback, escalating hard questions to a stronger model, memory across conversations, a more natural voice (Kokoro), launch at login.
 
-The owner holds the requirements and the Definition of Done, and is the only person who decides. Agents report to the main session, and the main session reports to the owner. When a requirement is unknown, say so and add it to "Open questions" instead of inventing one. A question from the owner ("ทำได้ไหม?") is a question: answer it and wait for an explicit order before building. Ask clarifying questions in Thai. Code, docs, UI copy and commit messages are in English. Raphael itself speaks and listens in English only.
+The owner holds the requirements and the Definition of Done, and is the only person who decides. Agents report to the main session, and the main session reports to the owner. When a requirement is unknown, say so and add it to "Open questions" instead of inventing one. A question from the owner ("ทำได้ไหม?") is a question: answer it and wait for an explicit order before building. Ask clarifying questions in Thai. Code, docs, UI copy and commit messages are in English. Uriel itself speaks and listens in English only.
 
 ## Glossary
 
 Use these words with exactly these meanings in code, docs and UI copy.
 
-- **Raphael** – the assistant: the menu-bar app and everything it does.
-- **Owner** – the one person who uses Raphael and decides what it does.
-- **Wake word** – "Raphael", spoken by the owner, which makes Raphael start listening.
+- **Uriel** – the assistant: the menu-bar app and everything it does.
+- **Owner** – the one person who uses Uriel and decides what it does.
+- **Wake word** – "Uriel", spoken by the owner, which makes Uriel start listening.
 - **Utterance** – what the owner says after the wake word, up to the end of speech.
-- **Turn** – one utterance and Raphael's answer, including any tool calls in between.
+- **Turn** – one utterance and Uriel's answer, including any tool calls in between.
 - **Conversation** – consecutive turns that share history and are sent to Claude together. When a conversation ends is not decided (see Open questions).
-- **Tool** – one typed Mac action Claude may ask for, such as `open_app` or `set_timer`. Raphael's own code validates it and runs it.
-- **Timer** – a countdown Raphael keeps itself. When it ends, Raphael posts a notification and says so.
-- **Voice** – the text-to-speech voice Raphael answers in: female, English.
+- **Tool** – one typed Mac action Claude may ask for, such as `open_app` or `set_timer`. Uriel's own code validates it and runs it.
+- **Timer** – a countdown Uriel keeps itself. When it ends, Uriel posts a notification and says so.
+- **Voice** – the text-to-speech voice Uriel answers in: female, English.
 
 ## Architecture decisions (agreed)
 
@@ -54,9 +56,9 @@ There is no "best" architecture, only trade-offs. Record each decision with its 
   - Only text goes to Claude; audio stays on the Mac.
   - Gain: free, offline, low power.
   - Cost: an always-on mic, wake-word accuracy still to be measured, and Apple voices less natural than neural TTS.
-- **Timers:** Raphael keeps them, with `UNUserNotificationCenter` and a spoken alert, not the Clock app (ADR 0004).
-  - Gain: no setup, and Raphael can list and cancel them.
-  - Cost: they are not in Clock, and they are lost when Raphael quits unless persisted.
+- **Timers:** Uriel keeps them, with `UNUserNotificationCenter` and a spoken alert, not the Clock app (ADR 0004).
+  - Gain: no setup, and Uriel can list and cancel them.
+  - Cost: they are not in Clock, and they are lost when Uriel quits unless persisted.
 - **Tools and secrets, proposed:** see ADR 0005; the owner has not confirmed it yet.
   - Claude gets typed, allowlisted tools only. There is no shell, AppleScript or `osascript` tool.
   - Every argument is re-validated in Swift.
@@ -198,7 +200,7 @@ say -v '?'                        # list installed voices (look for female Engli
 
 Track unanswered questions here and settle them with the owner.
 
-- **Wake-word engine:** sherpa-onnx keyword spotting or continuous `SpeechAnalyzer` with a keyword match? Settle with a spike on this Mac that measures false triggers per hour, misses and CPU.
+- **Wake-word engine:** sherpa-onnx keyword spotting or continuous `SpeechAnalyzer` with a keyword match? Settle with a spike on this Mac that measures false triggers per hour, misses and CPU. "Uriel" is a short word with close neighbours ("Muriel", "you real", "your eel", "oriel"), so the false-trigger target matters more.
 - **Chat model:** Sonnet 5.5 (proposed: closest to chatting with Claude) or Haiku 5.5 (fastest, cheapest)? Measure the time to the first spoken word on this Mac before deciding.
 - **ADR 0005** (typed tools, Keychain): does the owner confirm it?
 - **Project format:** an Xcode project, or a Swift package plus a generator such as XcodeGen? It must produce a signed `.app` with `Info.plist` and entitlements, and build and test from the command line (`xcodebuild`) so agents can run the gates.
@@ -207,11 +209,11 @@ Track unanswered questions here and settle them with the owner.
 - **Conversations:**
   - When does a conversation end (a silence timeout, "goodbye")?
   - Is anything kept after it ends?
-- **Barge-in:** may the owner interrupt Raphael mid-sentence? That needs echo cancellation.
+- **Barge-in:** may the owner interrupt Uriel mid-sentence? That needs echo cancellation.
 - **The voice:** which female English voice? An Apple Premium voice, or Kokoro later? The owner picks by ear.
 - **Privacy:** every utterance's text goes to the Claude API. Is that fine for everything the owner says near the Mac?
-- **No internet:** what should Raphael say or do?
-- **Timers:** keep them across a Raphael restart, or let them go?
+- **No internet:** what should Uriel say or do?
+- **Timers:** keep them across a Uriel restart, or let them go?
 - **macOS 27:** will the owner upgrade? It changes Foundation Models and maybe the Speech APIs.
 - **Git branch model:** stay on `main`, or use feature branches?
 - **Definition of Done** for v1.

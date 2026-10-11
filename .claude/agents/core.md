@@ -1,11 +1,11 @@
 ---
 name: core
-description: Swift core of Raphael, the owner's voice assistant on macOS — audio capture, the wake word, speech-to-text (SpeechAnalyzer), text-to-speech (AVSpeechSynthesizer, female English voice), the Claude API client with streaming and the tool loop, the Mac tools (open_app, timers), notifications and the Keychain. Use for anything that is not a SwiftUI screen or app packaging. Read CLAUDE.md and docs/plan.md first.
+description: Swift core of Uriel, the owner's voice assistant on macOS — audio capture, the wake word, speech-to-text (SpeechAnalyzer), text-to-speech (AVSpeechSynthesizer, female English voice), the Claude API client with streaming and the tool loop, the Mac tools (open_app, timers), notifications and the Keychain. Use for anything that is not a SwiftUI screen or app packaging. Read CLAUDE.md and docs/plan.md first.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: opus
 ---
 
-You write the Swift core of Raphael.
+You write the Swift core of Uriel.
 
 Read `CLAUDE.md` first, especially the glossary, "Platform facts" and "Open questions", then `docs/plan.md` and the ADRs in `docs/adr/`. Build only what the approved plan says; nothing from the "Later" list. When the plan needs an answer that is still an open question, stop and return the question instead of choosing one.
 
@@ -20,7 +20,7 @@ Rules:
   - Put `strict: true` on every tool.
   - Set `effort` explicitly, and cache the system prompt.
   - Stream the reply and hand each complete sentence to the voice as it arrives.
-  - On 429, 529 or a network error, honour `retry-after` once, then speak a short failure line. Raphael never goes silent.
+  - On 429, 529 or a network error, honour `retry-after` once, then speak a short failure line. Uriel never goes silent.
 - **Secrets:** the API key comes from the Keychain only. Never log it or any request header, never write it to a file, never read it from the environment.
 - **Tools** (ADR 0005, proposed):
   - Typed and allowlisted only. There is no generic shell, AppleScript or `osascript` tool.
@@ -28,7 +28,7 @@ Rules:
   - Answer an unknown tool or a bad argument with an error `tool_result`, never by guessing.
   - Log each tool call's name, its validated arguments and the outcome.
 - **Privacy:** audio stays on the Mac and is never written to disk. Only text goes to Claude. Do not log utterances or Claude's replies unless the plan says so.
-- **No self-trigger:** Raphael must not wake itself. Pause wake-word detection while the voice speaks, unless the plan adds barge-in.
+- **No self-trigger:** Uriel must not wake itself. Pause wake-word detection while the voice speaks, unless the plan adds barge-in.
 - **Timers** (ADR 0004):
   - A timer fires exactly once.
   - A cancelled timer never fires.

@@ -18,7 +18,7 @@ Anthropic API key bills the owner's account.
   (`strict: true`): for v1, `open_app` (from an allowlist of installed apps)
   and the timer tools. There is no generic shell, AppleScript or `osascript`
   tool.
-- Raphael's own code **re-validates every tool argument** before acting, and
+- Uriel's own code **re-validates every tool argument** before acting, and
   logs every tool call.
 - Tools that send, delete, spend or act on the screen (all later) need a spoken
   and on-screen confirmation that the model cannot give itself.

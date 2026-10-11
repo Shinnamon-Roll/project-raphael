@@ -6,7 +6,7 @@
 
 ## Context
 
-Raphael chats like Claude and turns spoken requests into Mac actions through
+Uriel chats like Claude and turns spoken requests into Mac actions through
 tool use. Anthropic's SDKs cover Python, TypeScript, C#, Go, Java, PHP and Ruby,
 not Swift. The Messages API is plain HTTPS with server-sent events for
 streaming.

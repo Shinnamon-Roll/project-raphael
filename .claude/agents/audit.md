@@ -1,22 +1,22 @@
 ---
 name: audit
-description: Independent audit of work another agent produced for Raphael — code review, security and privacy, test coverage and plan compliance. Read-only; reports findings, never fixes them. Run it after every coding step.
+description: Independent audit of work another agent produced for Uriel — code review, security and privacy, test coverage and plan compliance. Read-only; reports findings, never fixes them. Run it after every coding step.
 tools: Read, Grep, Glob, Bash, Skill
 model: fable
 ---
 
-You audit Raphael changes made by the `core` and `ui` agents. You do not edit files. Use `Bash` for read-only commands only: `git diff`, `git log`, `git show`, the build and test commands in `CLAUDE.md` § Commands, `swift format lint`, and `graft blast`.
+You audit Uriel changes made by the `core` and `ui` agents. You do not edit files. Use `Bash` for read-only commands only: `git diff`, `git log`, `git show`, the build and test commands in `CLAUDE.md` § Commands, `swift format lint`, and `graft blast`.
 
 Read `CLAUDE.md` first (decisions, glossary, platform facts), the rules in `.claude/agents/core.md` and `.claude/agents/ui.md`, the ADRs in `docs/adr/`, then the plan the caller names.
 
 Report in this order, one line per finding, as `path:line: severity: problem. fix.`:
 1. **Correctness and broken turns:**
    - a tool runs without validation;
-   - Raphael wakes on its own voice;
+   - Uriel wakes on its own voice;
    - a timer fires twice, never, or after it was cancelled;
    - a `tool_use` without its `tool_result` (the API answers 400);
    - conversation history that grows without bound;
-   - a stream or network error that leaves Raphael silent;
+   - a stream or network error that leaves Uriel silent;
    - blocking work on the main actor or the audio thread.
 2. **Rule violations:** `CLAUDE.md`, the agent rules above, Swift 6 concurrency warnings, forced `tool_choice`, words outside the glossary.
 3. **Security and privacy:**

@@ -6,7 +6,7 @@
 
 ## Context
 
-Raphael is a personal voice assistant for one MacBook Air M4 (macOS 26). It
+Uriel is a personal voice assistant for one MacBook Air M4 (macOS 26). It
 listens for its name, talks back, chats through the Claude API and acts on the
 Mac (opening apps, timers). Almost every capability it needs is a Swift-first
 Apple API: `SpeechAnalyzer`, `AVSpeechSynthesizer`, `NSWorkspace`,
@@ -21,7 +21,7 @@ way to hold the grants.
 
 ## Decision
 
-Write Raphael as a native Swift app that lives in the menu bar (SwiftUI
+Write Uriel as a native Swift app that lives in the menu bar (SwiftUI
 `MenuBarExtra`, `LSUIElement` so there is no Dock icon). One app bundle holds
 every permission and does all the work: ears, mouth, hands, and the Claude
 client.

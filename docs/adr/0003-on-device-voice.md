@@ -3,10 +3,11 @@
 - **Status:** accepted (wake-word engine still open)
 - **Date:** 2026-10-11
 - **Decided by:** the owner
+- **2026-10-11:** the wake word was renamed from "Raphael" to "Uriel" by the owner.
 
 ## Context
 
-The owner says "Raphael" and speaks English; Raphael answers by voice in
+The owner says "Uriel" and speaks English; Uriel answers by voice in
 English, in a female voice. The owner wants the wake word in v1, not
 push-to-talk, and free, local speech. macOS has no public API for a custom
 wake word: Siri listens only for "Siri" and "Hey Siri". Picovoice Porcupine no
@@ -15,7 +16,7 @@ sales only).
 
 ## Decision
 
-- **Wake word:** an on-device keyword spotter for "Raphael", running in the
+- **Wake word:** an on-device keyword spotter for "Uriel", running in the
   app. The engine is picked by a measured spike on this Mac (false triggers per
   hour, misses, CPU), between sherpa-onnx keyword spotting (Apache-2.0, Swift
   bindings, no training) and continuous `SpeechAnalyzer` transcription with a

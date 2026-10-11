@@ -30,3 +30,7 @@ and the main session appends it.
 - 15:35 [main] #4 done: CLAUDE.md project guide and ADRs 0001-0005 → CLAUDE.md with purpose, v1 goal, Later list, glossary, decisions, macOS and Claude API facts, agents, git, queue, layout, commands, open questions; ADRs 0001-0005 — CLAUDE.md docs/adr/
 - 15:36 [main] #5 started: Agents: core, ui, research, answer, audit
 - 15:38 [main] #5 done: Agents: core, ui, research, answer, audit → agents core and ui (Opus, Swift), research (Opus, read-only), answer (Sonnet, read-only), audit (Fable, read-only, VERDICT); every skill on the shortlists checked to exist — .claude/agents/
+- 16:14 [main] #6 received: Rename the assistant to Uriel
+- 16:14 [main] #7 received: v1 plan and research findings (ADRs 0006-0008)
+- 16:14 [main] #6 started: Rename the assistant to Uriel
+- 16:15 [main] #6 done: Rename the assistant to Uriel → assistant, app and wake word renamed from Raphael to Uriel; repo name kept until the owner renames it to code-uriel; dated note in ADR 0003 — CLAUDE.md docs/adr/ .claude/agents/
